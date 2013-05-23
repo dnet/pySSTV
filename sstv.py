@@ -89,9 +89,13 @@ class GrayscaleSSTV(SSTV):
 		for item in SSTV.gen_freq_bits(self):
 			yield item
 		for line in xrange(self.HEIGHT):
-			yield FREQ_SYNC, self.SYNC
+			for item in self.horizontal_sync():
+				yield item
 			for item in self.encode_line(line):
 				yield item
+
+	def horizontal_sync(self):
+		yield FREQ_SYNC, self.SYNC
 
 	def encode_line(self, line):
 		msec_pixel = self.SCAN / self.WIDTH
