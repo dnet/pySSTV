@@ -143,6 +143,12 @@ class MartinM1(ColorSSTV):
 	SCAN = 146.432
 
 
+class ScottieS1(MartinM1):
+	VIS_CODE = 0x3c
+	SYNC = 9
+	SCAN = 138.24
+
+
 if __name__ == '__main__':
 	from PIL import Image
 	image = Image.open('160x120bw.png')
