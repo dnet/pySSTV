@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+
+from __future__ import division
+from sstv import FREQ_BLACK, FREQ_RANGE, FREQ_SYNC
+from grayscale import GrayscaleSSTV
+
+class ColorSSTV(GrayscaleSSTV):
+	RED, GREEN, BLUE = range(3)
+
+	def encode_line(self, line):
+		cs = self.COLOR_SEQ
+		msec_pixel = self.SCAN / self.WIDTH
+		image = self.image
+		for index in cs:
+			for item in self.before_channel(index):
+				yield item
+			for col in xrange(self.WIDTH):
+				pixel = image.getpixel((col, line))
+				value = pixel[index]
+				freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 255
+				yield freq_pixel, msec_pixel
+
+	def before_channel(self, index):
+		return []
+
+
+class MartinM1(ColorSSTV):
+	COLOR_SEQ = (ColorSSTV.GREEN, ColorSSTV.BLUE, ColorSSTV.RED)
+	VIS_CODE = 0x2c
+	WIDTH = 320
+	HEIGHT = 256
+	SYNC = 4.862
+	SCAN = 146.432
+	INTER_CH_GAP = 0.572
+
+	def before_channel(self, index):
+		if index != ColorSSTV.GREEN:
+			yield FREQ_BLACK, self.INTER_CH_GAP
+
+
+class MartinM2(MartinM1):
+	VIS_CODE = 0x28
+	WIDTH = 160
+	SCAN = 73.216
+
+
+class ScottieS1(MartinM1):
+	VIS_CODE = 0x3c
+	SYNC = 9
+	SCAN = 138.24
+	INTER_CH_GAP = 1.5
+
+	def horizontal_sync(self):
+		return []
+
+	def before_channel(self, index):
+		if index != ColorSSTV.RED:
+			yield FREQ_SYNC, self.SYNC
+		yield FREQ_BLACK, self.INTER_CH_GAP
+
+
+class ScottieS2(ScottieS1):
+	VIS_CODE = 0x38
+	SCAN = 88.064
+	WIDTH = 160
