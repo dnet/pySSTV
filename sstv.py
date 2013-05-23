@@ -57,7 +57,7 @@ class SSTV(object):
 		lowest = -amp
 		highest = amp - 1
 		for value in self.gen_values():
-			sample = int(round(value * amp + alias * random()))
+			sample = int(round(value * amp + alias * (random() - 0.5)))
 			yield max(min(highest, sample), lowest)
 
 	def gen_values(self):
@@ -66,7 +66,7 @@ class SSTV(object):
 		param = 0
 		for freq, msec in self.gen_freq_bits():
 			offset = param
-			for sample in xrange(int(round(spms * msec + random()))):
+			for sample in xrange(int(round(spms * msec + random() - 0.5))):
 				t = sample / self.samples_per_sec
 				param = t * freq * 2 * pi + offset
 				yield sin(param)
