@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from sstv import FREQ_BLACK, FREQ_RANGE
+from sstv import byte_to_freq, FREQ_BLACK
 from grayscale import GrayscaleSSTV
 
 class ColorSSTV(GrayscaleSSTV):
@@ -16,8 +16,7 @@ class ColorSSTV(GrayscaleSSTV):
 				yield item
 			for col in xrange(self.WIDTH):
 				pixel = image.getpixel((col, line))
-				value = pixel[index]
-				freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 255
+				freq_pixel = byte_to_freq(pixel[index])
 				yield freq_pixel, msec_pixel
 
 	def before_channel(self, index):

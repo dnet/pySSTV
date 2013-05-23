@@ -83,6 +83,13 @@ class SSTV(object):
 		yield parity_freq, MSEC_VIS_BIT
 		yield FREQ_SYNC, MSEC_VIS_BIT # stop bit
 
+	def horizontal_sync(self):
+		yield FREQ_SYNC, self.SYNC
+
+
+def byte_to_freq(value):
+	return FREQ_BLACK + FREQ_RANGE * value / 255
+
 
 if __name__ == '__main__':
 	from PIL import Image

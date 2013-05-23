@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from sstv import FREQ_BLACK, FREQ_RANGE, FREQ_SYNC, SSTV
+from sstv import SSTV, byte_to_freq
 
 class GrayscaleSSTV(SSTV):
 	def gen_freq_bits(self):
@@ -13,16 +13,12 @@ class GrayscaleSSTV(SSTV):
 			for item in self.encode_line(line):
 				yield item
 
-	def horizontal_sync(self):
-		yield FREQ_SYNC, self.SYNC
-
 	def encode_line(self, line):
 		msec_pixel = self.SCAN / self.WIDTH
 		image = self.image
 		for col in xrange(self.WIDTH):
 			pixel = image.getpixel((col, line))
-			value = sum(pixel) / len(pixel)
-			freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 255
+			freq_pixel = byte_to_freq(sum(pixel) / len(pixel))
 			yield freq_pixel, msec_pixel
 
 
