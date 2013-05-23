@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from sstv import FREQ_BLACK, FREQ_RANGE, FREQ_SYNC
+from sstv import FREQ_BLACK, FREQ_RANGE
 from grayscale import GrayscaleSSTV
 
 class ColorSSTV(GrayscaleSSTV):
@@ -55,7 +55,8 @@ class ScottieS1(MartinM1):
 
 	def before_channel(self, index):
 		if index != ColorSSTV.RED:
-			yield FREQ_SYNC, self.SYNC
+			for item in MartinM1.horizontal_sync(self):
+				yield item
 		yield FREQ_BLACK, self.INTER_CH_GAP
 
 
