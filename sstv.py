@@ -88,14 +88,34 @@ class GrayscaleSSTV(SSTV):
 	def gen_freq_bits(self):
 		for item in SSTV.gen_freq_bits(self):
 			yield item
-		msec_pixel = self.SCAN / self.WIDTH
-		image = self.image
 		for line in xrange(self.HEIGHT):
 			yield FREQ_SYNC, self.SYNC
-			for col in xrange(self.WIDTH):
-				pixel = image.getpixel((col, line))
-				value = sum(pixel) / len(pixel)
-				freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 256
+			for item in self.encode_line(line):
+				yield item
+
+	def encode_line(self, line):
+		msec_pixel = self.SCAN / self.WIDTH
+		image = self.image
+		for col in xrange(self.WIDTH):
+			pixel = image.getpixel((col, line))
+			value = sum(pixel) / len(pixel)
+			freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 255
+			yield freq_pixel, msec_pixel
+
+
+class ColorSSTV(GrayscaleSSTV):
+	RED, GREEN, BLUE = range(3)
+
+	def encode_line(self, line):
+		cs = self.COLOR_SEQ
+		msec_pixel = self.SCAN / self.WIDTH
+		image = self.image
+		for col in xrange(self.WIDTH):
+			pixel = image.getpixel((col, line))
+			print pixel
+			for index in cs:
+				value = pixel[index]
+				freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 255
 				yield freq_pixel, msec_pixel
 
 
