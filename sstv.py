@@ -127,6 +127,23 @@ class Robot8BW(GrayscaleSSTV):
 	SCAN = 56
 
 
+class Robot24BW(GrayscaleSSTV):
+	VIS_CODE = 0x0A
+	WIDTH = 320
+	HEIGHT = 240
+	SYNC = 12
+	SCAN = 93
+
+
+class MartinM1(ColorSSTV):
+	COLOR_SEQ = (ColorSSTV.GREEN, ColorSSTV.BLUE, ColorSSTV.RED)
+	VIS_CODE = 0x2c
+	WIDTH = 320
+	HEIGHT = 256
+	SYNC = 4.862
+	SCAN = 146.432
+
+
 if __name__ == '__main__':
 	from PIL import Image
 	image = Image.open('160x120bw.png')
