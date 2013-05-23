@@ -178,6 +178,12 @@ class ScottieS1(MartinM1):
 		yield FREQ_BLACK, self.INTER_CH_GAP
 
 
+class ScottieS2(ScottieS1):
+	VIS_CODE = 0x38
+	SCAN = 88.064
+	WIDTH = 160
+
+
 if __name__ == '__main__':
 	from PIL import Image
 	image = Image.open('160x120bw.png')
