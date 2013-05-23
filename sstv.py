@@ -17,12 +17,6 @@ MSEC_VIS_START = 300
 MSEC_VIS_SYNC = 10
 MSEC_VIS_BIT = 30
 
-ROBOT_BW_8_WIDTH = 160
-ROBOT_BW_8_HEIGHT = 120
-ROBOT_BW_8_SYNC = 10
-ROBOT_BW_8_SCAN = 56
-ROBOT_BW_8_VIS = 0x02
-
 class SSTV(object):
 	def __init__(self, image, samples_per_sec, bits):
 		self.image = image
@@ -77,29 +71,44 @@ class SSTV(object):
 		yield FREQ_SYNC, MSEC_VIS_SYNC
 		yield FREQ_VIS_START, MSEC_VIS_START
 		yield FREQ_SYNC, MSEC_VIS_BIT # start bit
-		vis_code = ROBOT_BW_8_VIS
+		vis = self.VIS_CODE
 		num_ones = 0
-		for bitnum in xrange(7):
-			bit = (vis_code >> bitnum) & 1
+		for _ in xrange(7):
+			bit = vis & 1
+			vis >>= 1
 			num_ones += bit
 			bit_freq = FREQ_VIS_BIT1 if bit == 1 else FREQ_VIS_BIT0
 			yield bit_freq, MSEC_VIS_BIT
 		parity_freq = FREQ_VIS_BIT1 if num_ones % 2 == 1 else FREQ_VIS_BIT0
 		yield parity_freq, MSEC_VIS_BIT
 		yield FREQ_SYNC, MSEC_VIS_BIT # stop bit
-		msec_pixel = ROBOT_BW_8_SCAN / ROBOT_BW_8_WIDTH
+
+
+class GrayscaleSSTV(SSTV):
+	def gen_freq_bits(self):
+		for item in SSTV.gen_freq_bits(self):
+			yield item
+		msec_pixel = self.SCAN / self.WIDTH
 		image = self.image
-		for line in xrange(ROBOT_BW_8_HEIGHT):
-			yield FREQ_SYNC, ROBOT_BW_8_SYNC
-			for col in xrange(ROBOT_BW_8_WIDTH):
+		for line in xrange(self.HEIGHT):
+			yield FREQ_SYNC, self.SYNC
+			for col in xrange(self.WIDTH):
 				pixel = image.getpixel((col, line))
 				value = sum(pixel) / len(pixel)
 				freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 256
 				yield freq_pixel, msec_pixel
 
 
+class Robot8BW(GrayscaleSSTV):
+	VIS_CODE = 0x02
+	WIDTH = 160
+	HEIGHT = 120
+	SYNC = 10
+	SCAN = 56
+
+
 if __name__ == '__main__':
 	from PIL import Image
 	image = Image.open('160x120bw.png')
-	s = SSTV(image, 48000, 16)
+	s = Robot8BW(image, 48000, 16)
 	s.write_wav('test.wav')
