@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division, with_statement
-from math import sin, asin, pi
+from math import sin, pi
 from random import random
 import struct
 
