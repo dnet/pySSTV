@@ -109,21 +109,22 @@ class GrayscaleSSTV(SSTV):
 
 class ColorSSTV(GrayscaleSSTV):
 	RED, GREEN, BLUE = range(3)
-	INTER_CH_GAP = 0
 
 	def encode_line(self, line):
 		cs = self.COLOR_SEQ
 		msec_pixel = self.SCAN / self.WIDTH
 		image = self.image
-		icg = self.INTER_CH_GAP
-		for n, index in enumerate(cs):
-			if n and icg:
-				yield FREQ_BLACK, icg
+		for index in cs:
+			for item in self.before_channel(index):
+				yield item
 			for col in xrange(self.WIDTH):
 				pixel = image.getpixel((col, line))
 				value = pixel[index]
 				freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 255
 				yield freq_pixel, msec_pixel
+
+	def before_channel(self, index):
+		return []
 
 
 class Robot8BW(GrayscaleSSTV):
@@ -151,6 +152,10 @@ class MartinM1(ColorSSTV):
 	SCAN = 146.432
 	INTER_CH_GAP = 0.572
 
+	def before_channel(self, index):
+		if index != ColorSSTV.GREEN:
+			yield FREQ_BLACK, self.INTER_CH_GAP
+
 
 class MartinM2(MartinM1):
 	VIS_CODE = 0x28
@@ -162,7 +167,6 @@ class ScottieS1(MartinM1):
 	VIS_CODE = 0x3c
 	SYNC = 9
 	SCAN = 138.24
-	INTER_CH_GAP = 0
 
 
 if __name__ == '__main__':
