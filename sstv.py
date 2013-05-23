@@ -148,6 +148,12 @@ class MartinM1(ColorSSTV):
 	INTER_CH_GAP = 0.572
 
 
+class MartinM2(MartinM1):
+	VIS_CODE = 0x28
+	WIDTH = 160
+	SCAN = 73.216
+
+
 class ScottieS1(MartinM1):
 	VIS_CODE = 0x3c
 	SYNC = 9
