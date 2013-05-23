@@ -167,6 +167,15 @@ class ScottieS1(MartinM1):
 	VIS_CODE = 0x3c
 	SYNC = 9
 	SCAN = 138.24
+	INTER_CH_GAP = 1.5
+
+	def horizontal_sync(self):
+		return []
+
+	def before_channel(self, index):
+		if index != ColorSSTV.RED:
+			yield FREQ_SYNC, self.SYNC
+		yield FREQ_BLACK, self.INTER_CH_GAP
 
 
 if __name__ == '__main__':
