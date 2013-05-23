@@ -110,10 +110,9 @@ class ColorSSTV(GrayscaleSSTV):
 		cs = self.COLOR_SEQ
 		msec_pixel = self.SCAN / self.WIDTH
 		image = self.image
-		for col in xrange(self.WIDTH):
-			pixel = image.getpixel((col, line))
-			print pixel
-			for index in cs:
+		for index in cs:
+			for col in xrange(self.WIDTH):
+				pixel = image.getpixel((col, line))
 				value = pixel[index]
 				freq_pixel = FREQ_BLACK + FREQ_RANGE * value / 255
 				yield freq_pixel, msec_pixel
