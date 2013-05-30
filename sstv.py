@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division, with_statement
-from math import sin, pi
+from math import sin, pi, floor
 from random import random
 import struct
 
@@ -58,12 +58,16 @@ class SSTV(object):
 		"""generates -1 .. +1 values from freq_bits"""
 		spms = self.samples_per_sec / 1000
 		param = 0
+		samples = 0
 		for freq, msec in self.gen_freq_bits():
 			offset = param
-			for sample in xrange(int(round(spms * msec))):
+			samples += spms * msec
+			tx = floor(samples)
+			for sample in xrange(int(tx)):
 				t = sample / self.samples_per_sec
 				param = t * freq * 2 * pi + offset
 				yield sin(param)
+			samples -= tx
 
 	def gen_freq_bits(self):
 		"""generates (freq, msec) tuples from image"""
