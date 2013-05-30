@@ -18,9 +18,13 @@ class ColorSSTV(GrayscaleSSTV):
 				pixel = image.getpixel((col, line))
 				freq_pixel = byte_to_freq(pixel[index])
 				yield freq_pixel, msec_pixel
+			for item in self.after_channel(index):
+				yield item
 
 	def before_channel(self, index):
 		return []
+
+	after_channel = before_channel
 
 
 class MartinM1(ColorSSTV):
