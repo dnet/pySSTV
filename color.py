@@ -53,8 +53,8 @@ class MartinM2(MartinM1):
 class ScottieS1(MartinM1):
 	VIS_CODE = 0x3c
 	SYNC = 9
-	SCAN = 138.24
 	INTER_CH_GAP = 1.5
+	SCAN = 138.24 - INTER_CH_GAP
 
 	def horizontal_sync(self):
 		return []
@@ -68,5 +68,5 @@ class ScottieS1(MartinM1):
 
 class ScottieS2(ScottieS1):
 	VIS_CODE = 0x38
-	SCAN = 88.064
+	SCAN = 88.064 - ScottieS1.INTER_CH_GAP
 	WIDTH = 160
