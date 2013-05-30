@@ -37,8 +37,11 @@ class MartinM1(ColorSSTV):
 	INTER_CH_GAP = 0.572
 
 	def before_channel(self, index):
-		if index != ColorSSTV.GREEN:
+		if index == ColorSSTV.GREEN:
 			yield FREQ_BLACK, self.INTER_CH_GAP
+
+	def after_channel(self, index):
+		yield FREQ_BLACK, self.INTER_CH_GAP
 
 
 class MartinM2(MartinM1):
