@@ -93,11 +93,3 @@ class SSTV(object):
 
 def byte_to_freq(value):
 	return FREQ_BLACK + FREQ_RANGE * value / 255
-
-
-if __name__ == '__main__':
-	from PIL import Image
-	from grayscale import Robot8BW
-	image = Image.open('160x120bw.png')
-	s = Robot8BW(image, 48000, 16)
-	s.write_wav('test.wav')
