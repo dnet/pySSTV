@@ -36,3 +36,5 @@ class Robot24BW(GrayscaleSSTV):
 	HEIGHT = 240
 	SYNC = 12
 	SCAN = 93
+
+MODES = (Robot8BW, Robot24BW)
