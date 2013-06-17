@@ -97,7 +97,7 @@ def byte_to_freq(value):
 
 if __name__ == '__main__':
 	from PIL import Image
-	from grayscale import Robot8BW
-	image = Image.open('160x120bw.png')
-	s = Robot8BW(image, 48000, 16)
+	from color import MartinM1
+	image = Image.open('320x256.png')
+	s = MartinM1(image, 48000, 16)
 	s.write_wav('test.wav')
