@@ -3,7 +3,8 @@
 from __future__ import division, with_statement
 from math import sin, pi, floor
 from random import random
-import struct
+from contextlib import closing
+import struct, wave
 
 FREQ_VIS_BIT1 = 1100
 FREQ_SYNC = 1200
@@ -25,23 +26,13 @@ class SSTV(object):
 
 	BITS_TO_STRUCT = {8: 'b', 16: 'h'}
 	def write_wav(self, filename):
-		bytes_per_sec = self.bits // 8
 		fmt = '<' + self.BITS_TO_STRUCT[self.bits]
 		data = ''.join(struct.pack(fmt, b) for b in self.gen_samples())
-		payload = ''.join((
-				'WAVE',
-				'fmt ',
-				struct.pack('<IHHIIHH', 16, 1, 1, self.samples_per_sec,
-					self.samples_per_sec * bytes_per_sec, bytes_per_sec,
-					self.bits),
-				'data',
-				struct.pack('<I', len(data))
-				))
-		header = 'RIFF' + struct.pack('<I', len(payload) + len(data))
-		with file(filename, 'wb') as wav:
-			wav.write(header)
-			wav.write(payload)
-			wav.write(data)
+		with closing(wave.open(filename, 'wb')) as wav:
+			wav.setnchannels(1)
+			wav.setsampwidth(self.bits // 8)
+			wav.setframerate(self.samples_per_sec)
+			wav.writeframes(data)
 
 	def gen_samples(self):
 		"""generates bits from gen_values"""
@@ -93,11 +84,3 @@ class SSTV(object):
 
 def byte_to_freq(value):
 	return FREQ_BLACK + FREQ_RANGE * value / 255
-
-
-if __name__ == '__main__':
-	from PIL import Image
-	from color import MartinM1
-	image = Image.open('320x256.png')
-	s = MartinM1(image, 48000, 16)
-	s.write_wav('test.wav')

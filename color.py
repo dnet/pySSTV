@@ -70,3 +70,5 @@ class ScottieS2(ScottieS1):
 	VIS_CODE = 0x38
 	SCAN = 88.064 - ScottieS1.INTER_CH_GAP
 	WIDTH = 160
+
+MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2)
