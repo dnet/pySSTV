@@ -26,6 +26,7 @@ class SSTV(object):
 
 	BITS_TO_STRUCT = {8: 'b', 16: 'h'}
 	def write_wav(self, filename):
+		"""writes the whole image to a Microsoft WAV file"""
 		fmt = '<' + self.BITS_TO_STRUCT[self.bits]
 		data = ''.join(struct.pack(fmt, b) for b in self.gen_samples())
 		with closing(wave.open(filename, 'wb')) as wav:
@@ -35,7 +36,8 @@ class SSTV(object):
 			wav.writeframes(data)
 
 	def gen_samples(self):
-		"""generates bits from gen_values"""
+		"""generates discrete samples from gen_values(), performing quantization according to the bits per sample value given during construction
+		"""
 		max_value = 2 ** self.bits
 		alias = 1 / max_value
 		amp = max_value / 2
@@ -46,7 +48,8 @@ class SSTV(object):
 			yield max(min(highest, sample), lowest)
 
 	def gen_values(self):
-		"""generates -1 .. +1 values from freq_bits"""
+		"""generates samples between -1 and +1 from gen_freq_bits(), performing sampling according to the samples per second value given during construction
+		"""
 		spms = self.samples_per_sec / 1000
 		param = 0
 		samples = 0
@@ -61,7 +64,8 @@ class SSTV(object):
 			samples -= tx
 
 	def gen_freq_bits(self):
-		"""generates (freq, msec) tuples from image"""
+		"""generates tuples (freq, msec) that describe a sine wave segment with frequency in Hz and duration in ms
+		"""
 		yield FREQ_VIS_START, MSEC_VIS_START
 		yield FREQ_SYNC, MSEC_VIS_SYNC
 		yield FREQ_VIS_START, MSEC_VIS_START
