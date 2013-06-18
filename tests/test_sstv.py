@@ -6,6 +6,7 @@ from mock import MagicMock
 from StringIO import StringIO
 import hashlib
 
+import sstv
 from sstv import SSTV
 
 
@@ -49,8 +50,12 @@ class TestSSTV(unittest.TestCase):
 
     def test_gen_samples(self):
         gen_values = self.s.gen_samples()
-        # I expected to need this, but I don't? Not in this instance?
-        # sstv.random = Mock(return_value=0.4)  # xkcd:221
+        # gen_samples uses random to avoid quantization noise
+        # by using additive noise, so there's always a chance
+        # of running the code two consecutive times on the same machine
+        # and having different results.
+        # https://en.wikipedia.org/wiki/Quantization_%28signal_processing%29
+        sstv.random = MagicMock(return_value=0.4)  # xkcd:221
         expected = pickle.load(open("tests/assets/SSTV_gen_samples.p"))
         actual = list(islice(gen_values, 0, 1000))
         self.assertEqual(expected, actual)
@@ -58,15 +63,13 @@ class TestSSTV(unittest.TestCase):
     def test_write_wav(self):
         self.maxDiff = None
         sio = StringIO()
-        sio.close = MagicMock()  # ignore close()
+        sio.close = MagicMock()  # ignore close() so we can .getvalue()
         mock_open = MagicMock(return_value=sio)
         with mock.patch('__builtin__.open', mock_open):
             self.s.write_wav('unittest.wav')
         expected = 'bf61c82e96aed1370d5c1753d87729db'
         data = sio.getvalue()
-        hash = hashlib.md5()
-        hash.update(data)
-        actual = hash.hexdigest()
+        actual = hashlib.md5(data).hexdigest()
         self.assertEqual(expected, actual)
 
     def test_init(self):
