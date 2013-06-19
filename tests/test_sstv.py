@@ -1,5 +1,5 @@
 import unittest
-from itertools import islice
+from itertools import islice, izip
 import pickle
 import mock
 from mock import MagicMock
@@ -45,8 +45,8 @@ class TestSSTV(unittest.TestCase):
     def test_gen_values(self):
         gen_values = self.s.gen_values()
         expected = pickle.load(open("tests/assets/SSTV_gen_values.p"))
-        actual = list(islice(gen_values, 0, 1000))
-        self.assertEqual(expected, actual)
+        for e, g in izip(expected, gen_values):
+            self.assertAlmostEqual(e, g, delta=0.000000001)
 
     def test_gen_samples(self):
         gen_values = self.s.gen_samples()
