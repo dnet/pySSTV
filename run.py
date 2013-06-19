@@ -27,6 +27,8 @@ def main():
                         help='bits per sample (default: 16)')
     parser.add_argument('--vox', dest='vox', action='store_true',
                         help='add VOX tones at the beginning')
+    parser.add_argument('--fskid', dest='fskid',
+                        help='add FSKID at the end')
     args = parser.parse_args()
     image = Image.open(args.img_file)
     mode = module_map[args.mode]
@@ -36,6 +38,8 @@ def main():
         raise SystemExit(1)
     s = mode(image, args.rate, args.bits)
     s.vox_enabled = args.vox
+    if args.fskid:
+        s.add_fskid_text(args.fskid)
     s.write_wav(args.wav_file)
 
 

@@ -4,6 +4,7 @@ from __future__ import division, with_statement
 from math import sin, pi, floor
 from random import random
 from contextlib import closing
+from itertools import imap
 import struct
 import wave
 
@@ -14,10 +15,13 @@ FREQ_BLACK = 1500
 FREQ_VIS_START = 1900
 FREQ_WHITE = 2300
 FREQ_RANGE = FREQ_WHITE - FREQ_BLACK
+FREQ_FSKID_BIT1 = 1900
+FREQ_FSKID_BIT0 = 2100
 
 MSEC_VIS_START = 300
 MSEC_VIS_SYNC = 10
 MSEC_VIS_BIT = 30
+MSEC_FSKID_BIT = 22
 
 
 class SSTV(object):
@@ -27,6 +31,7 @@ class SSTV(object):
         self.samples_per_sec = samples_per_sec
         self.bits = bits
         self.vox_enabled = False
+        self.fskid_payload = ''
 
     BITS_TO_STRUCT = {8: 'b', 16: 'h'}
 
@@ -99,9 +104,19 @@ class SSTV(object):
         yield FREQ_SYNC, MSEC_VIS_BIT  # stop bit
         for freq_tuple in self.gen_image_tuples():
             yield freq_tuple
+        for fskid_byte in imap(ord, self.fskid_payload):
+            for _ in xrange(6):
+                bit = fskid_byte & 1
+                fskid_byte >>= 1
+                bit_freq = FREQ_FSKID_BIT1 if bit == 1 else FREQ_FSKID_BIT0
+                yield bit_freq, MSEC_FSKID_BIT
 
     def gen_image_tuples(self):
         return []
+
+    def add_fskid_text(self, text):
+        self.fskid_payload += '\x20\x2a{0}\x01'.format(
+                ''.join(chr(ord(c) - 0x20) for c in text))
 
     def horizontal_sync(self):
         yield FREQ_SYNC, self.SYNC
