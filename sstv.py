@@ -26,6 +26,7 @@ class SSTV(object):
         self.image = image
         self.samples_per_sec = samples_per_sec
         self.bits = bits
+        self.vox_enabled = False
 
     BITS_TO_STRUCT = {8: 'b', 16: 'h'}
 
@@ -78,6 +79,9 @@ class SSTV(object):
 
            frequency "freq" in Hz and duration "msec" in ms
         """
+        if self.vox_enabled:
+            for freq in (1900, 1500, 1900, 1500, 2300, 1500, 2300, 1500):
+                yield freq, 100
         yield FREQ_VIS_START, MSEC_VIS_START
         yield FREQ_SYNC, MSEC_VIS_SYNC
         yield FREQ_VIS_START, MSEC_VIS_START

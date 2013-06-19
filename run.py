@@ -25,6 +25,8 @@ def main():
                         help='sampling rate (default: 48000)')
     parser.add_argument('--bits', dest='bits', type=int, default=16,
                         help='bits per sample (default: 16)')
+    parser.add_argument('--vox', dest='vox', action='store_true',
+                        help='add VOX tones at the beginning')
     args = parser.parse_args()
     image = Image.open(args.img_file)
     mode = module_map[args.mode]
@@ -33,6 +35,7 @@ def main():
                'for mode {m.__name__}').format(m=mode), file=stderr)
         raise SystemExit(1)
     s = mode(image, args.rate, args.bits)
+    s.vox_enabled = args.vox
     s.write_wav(args.wav_file)
 
 
