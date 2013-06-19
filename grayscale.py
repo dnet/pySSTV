@@ -6,9 +6,7 @@ from sstv import SSTV, byte_to_freq
 
 class GrayscaleSSTV(SSTV):
 
-    def gen_freq_bits(self):
-        for item in SSTV.gen_freq_bits(self):
-            yield item
+    def gen_image_tuples(self):
         for line in xrange(self.HEIGHT):
             for item in self.horizontal_sync():
                 yield item
