@@ -12,7 +12,8 @@ performed such optimizations that wouldn't have complicated the codebase.
 Command line usage
 ------------------
 
-    usage: run.py [-h]
+    $ python -m pysstv -h
+    usage: __main__.py [-h]
                   [--mode {MartinM2,MartinM1,Robot24BW,ScottieS2,ScottieS1,Robot8BW}]
                   [--rate RATE] [--bits BITS]
                   image.png output.wav
