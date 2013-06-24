@@ -1,13 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-from __future__ import unicode_literals
 from distutils.core import setup
 
 setup(
     name='PySSTV',
     version='0.1',
     description='Python classes for generating Slow-scan Television transmissions',
-    author='András Veres-Szentkirályi',
+    author=u'András Veres-Szentkirályi',
     author_email='vsza@vsza.hu',
     url='https://github.com/dnet/pySSTV',
     packages=['pysstv', 'pysstv.tests', 'pysstv.examples'],
