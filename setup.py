@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='PySSTV',
-    version='0.1.4',
+    version='0.1.5',
     description='Python classes for generating Slow-scan Television transmissions',
     author=u'András Veres-Szentkirályi',
     author_email='vsza@vsza.hu',
