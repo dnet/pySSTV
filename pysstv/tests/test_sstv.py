@@ -6,8 +6,9 @@ from mock import MagicMock
 from StringIO import StringIO
 import hashlib
 
-import sstv
-from sstv import SSTV
+from pysstv import sstv
+from pysstv.sstv import SSTV
+from common import get_asset_filename
 
 
 class TestSSTV(unittest.TestCase):
@@ -44,7 +45,7 @@ class TestSSTV(unittest.TestCase):
     # FIXME: Instead of using a test fixture, 'expected' should be synthesized?
     def test_gen_values(self):
         gen_values = self.s.gen_values()
-        expected = pickle.load(open("tests/assets/SSTV_gen_values.p"))
+        expected = pickle.load(open(get_asset_filename("SSTV_gen_values.p")))
         for e, g in izip(expected, gen_values):
             self.assertAlmostEqual(e, g, delta=0.000000001)
 
@@ -56,7 +57,7 @@ class TestSSTV(unittest.TestCase):
         # and having different results.
         # https://en.wikipedia.org/wiki/Quantization_%28signal_processing%29
         sstv.random = MagicMock(return_value=0.4)  # xkcd:221
-        expected = pickle.load(open("tests/assets/SSTV_gen_samples.p"))
+        expected = pickle.load(open(get_asset_filename("SSTV_gen_samples.p")))
         actual = list(islice(gen_values, 0, 1000))
         self.assertEqual(expected, actual)
 
