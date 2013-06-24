@@ -29,6 +29,8 @@ def main():
                         help='add VOX tones at the beginning')
     parser.add_argument('--fskid', dest='fskid',
                         help='add FSKID at the end')
+    parser.add_argument('--chan', dest='chan', type=int,
+                        help='number of channels (default: mono)')
     args = parser.parse_args()
     image = Image.open(args.img_file)
     mode = module_map[args.mode]
@@ -40,6 +42,8 @@ def main():
     s.vox_enabled = args.vox
     if args.fskid:
         s.add_fskid_text(args.fskid)
+    if args.chan:
+        s.nchannels = args.chan
     s.write_wav(args.wav_file)
 
 

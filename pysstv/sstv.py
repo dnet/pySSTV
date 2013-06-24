@@ -32,6 +32,7 @@ class SSTV(object):
         self.bits = bits
         self.vox_enabled = False
         self.fskid_payload = ''
+        self.nchannels = 1
 
     BITS_TO_STRUCT = {8: 'b', 16: 'h'}
 
@@ -40,7 +41,7 @@ class SSTV(object):
         fmt = '<' + self.BITS_TO_STRUCT[self.bits]
         data = ''.join(struct.pack(fmt, b) for b in self.gen_samples())
         with closing(wave.open(filename, 'wb')) as wav:
-            wav.setnchannels(1)
+            wav.setnchannels(self.nchannels)
             wav.setsampwidth(self.bits // 8)
             wav.setframerate(self.samples_per_sec)
             wav.writeframes(data)
@@ -56,9 +57,11 @@ class SSTV(object):
         amp = max_value / 2
         lowest = -amp
         highest = amp - 1
+        chans = range(self.nchannels)
         for value in self.gen_values():
             sample = int(round(value * amp + alias * (random() - 0.5)))
-            yield max(min(highest, sample), lowest)
+            for chan in chans:
+                yield max(min(highest, sample), lowest)
 
     def gen_values(self):
         """generates samples between -1 and +1 from gen_freq_bits()
