@@ -7,7 +7,7 @@ http://vsza.hu/c6fa52b2c7b20320bdab2da15877f0efbd466e67d37c8d124a557367de9380da.
 """
 
 from PIL import Image, ImageFont, ImageDraw
-from grayscale import Robot8BW
+from pysstv.grayscale import Robot8BW
 
 img = Image.open("160x120bw.png")
 font = ImageFont.load_default()

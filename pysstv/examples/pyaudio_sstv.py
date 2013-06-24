@@ -6,7 +6,7 @@ Tested on PyAudio 0.2.7 http://people.csail.mit.edu/hubert/pyaudio/
 """
 
 from __future__ import division
-from sstv import SSTV
+from pysstv.sstv import SSTV
 from time import sleep
 from itertools import islice
 import struct, pyaudio
@@ -40,7 +40,7 @@ class PyAudioSSTV(object):
 
 def main():
     from PIL import Image
-    from grayscale import Robot8BW
+    from pysstv.grayscale import Robot8BW
 
     img = Image.open("160x120bw.png")
     sstv = Robot8BW(img, 44100, 16)

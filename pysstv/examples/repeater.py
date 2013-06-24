@@ -11,8 +11,8 @@ receiver such as slowrx or QSSTV.
 from __future__ import print_function
 from pyinotify import WatchManager, Notifier, ProcessEvent, IN_CREATE
 from pyaudio_sstv import PyAudioSSTV
-from color import MartinM1, MartinM2, ScottieS1, ScottieS2
-from grayscale import Robot8BW, Robot24BW
+from pysstv.color import MartinM1, MartinM2, ScottieS1, ScottieS2
+from pysstv.grayscale import Robot8BW, Robot24BW
 from PIL import Image
 from os import path
 
