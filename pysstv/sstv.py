@@ -5,7 +5,7 @@ from math import sin, pi, floor
 from random import random
 from contextlib import closing
 from itertools import imap
-import struct
+from array import array
 import wave
 
 FREQ_VIS_BIT1 = 1100
@@ -38,13 +38,13 @@ class SSTV(object):
 
     def write_wav(self, filename):
         """writes the whole image to a Microsoft WAV file"""
-        fmt = '<' + self.BITS_TO_STRUCT[self.bits]
-        data = ''.join(struct.pack(fmt, b) for b in self.gen_samples())
+        fmt = self.BITS_TO_STRUCT[self.bits]
+        data = array(fmt, self.gen_samples())
         with closing(wave.open(filename, 'wb')) as wav:
             wav.setnchannels(self.nchannels)
             wav.setsampwidth(self.bits // 8)
             wav.setframerate(self.samples_per_sec)
-            wav.writeframes(data)
+            wav.writeframes(data.tostring())
 
     def gen_samples(self):
         """generates discrete samples from gen_values()
