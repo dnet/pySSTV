@@ -54,7 +54,7 @@ class SSTV(object):
         """
         max_value = 2 ** self.bits
         alias = 1 / max_value
-        amp = max_value / 2
+        amp = max_value // 2
         lowest = -amp
         highest = amp - 1
         chans = range(self.nchannels)
