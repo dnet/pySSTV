@@ -15,9 +15,9 @@ class GrayscaleSSTV(SSTV):
 
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
-        image = self.image
+        image = self.image.load()
         for col in xrange(self.WIDTH):
-            pixel = image.getpixel((col, line))
+            pixel = image[col, line]
             freq_pixel = byte_to_freq(sum(pixel) / len(pixel))
             yield freq_pixel, msec_pixel
 

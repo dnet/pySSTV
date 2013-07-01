@@ -11,12 +11,12 @@ class ColorSSTV(GrayscaleSSTV):
     def encode_line(self, line):
         cs = self.COLOR_SEQ
         msec_pixel = self.SCAN / self.WIDTH
-        image = self.image
+        image = self.image.load()
         for index in cs:
             for item in self.before_channel(index):
                 yield item
             for col in xrange(self.WIDTH):
-                pixel = image.getpixel((col, line))
+                pixel = image[col, line]
                 freq_pixel = byte_to_freq(pixel[index])
                 yield freq_pixel, msec_pixel
             for item in self.after_channel(index):
