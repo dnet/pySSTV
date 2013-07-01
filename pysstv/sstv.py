@@ -4,7 +4,7 @@ from __future__ import division, with_statement
 from math import sin, pi, floor
 from random import random
 from contextlib import closing
-from itertools import imap, izip, cycle
+from itertools import imap, izip, cycle, chain
 from array import array
 import wave
 
@@ -40,6 +40,9 @@ class SSTV(object):
         """writes the whole image to a Microsoft WAV file"""
         fmt = self.BITS_TO_STRUCT[self.bits]
         data = array(fmt, self.gen_samples())
+        if self.nchannels != 1:
+            data = array(fmt, chain.from_iterable(
+                izip(*([data] * self.nchannels))))
         with closing(wave.open(filename, 'wb')) as wav:
             wav.setnchannels(self.nchannels)
             wav.setsampwidth(self.bits // 8)
@@ -57,13 +60,11 @@ class SSTV(object):
         amp = max_value // 2
         lowest = -amp
         highest = amp - 1
-        chans = range(self.nchannels)
         alias_cycle = cycle((alias * (random() - 0.5) for _ in xrange(1024)))
         for value, alias_item in izip(self.gen_values(), alias_cycle):
             sample = int(round(value * amp + alias_item))
-            for chan in chans:
-                yield (lowest if sample <= lowest else
-                    sample if sample <= highest else highest)
+            yield (lowest if sample <= lowest else
+                sample if sample <= highest else highest)
 
     def gen_values(self):
         """generates samples between -1 and +1 from gen_freq_bits()
