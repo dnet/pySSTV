@@ -4,7 +4,7 @@ from __future__ import division, with_statement
 from math import sin, pi, floor
 from random import random
 from contextlib import closing
-from itertools import imap
+from itertools import imap, izip, cycle
 from array import array
 import wave
 
@@ -58,8 +58,9 @@ class SSTV(object):
         lowest = -amp
         highest = amp - 1
         chans = range(self.nchannels)
-        for value in self.gen_values():
-            sample = int(round(value * amp + alias * (random() - 0.5)))
+        alias_cycle = cycle((alias * (random() - 0.5) for _ in xrange(1024)))
+        for value, alias_item in izip(self.gen_values(), alias_cycle):
+            sample = int(round(value * amp + alias_item))
             for chan in chans:
                 yield (lowest if sample <= lowest else
                     sample if sample <= highest else highest)
