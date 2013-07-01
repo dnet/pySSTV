@@ -61,7 +61,8 @@ class SSTV(object):
         for value in self.gen_values():
             sample = int(round(value * amp + alias * (random() - 0.5)))
             for chan in chans:
-                yield max(min(highest, sample), lowest)
+                yield (lowest if sample <= lowest else
+                    sample if sample <= highest else highest)
 
     def gen_values(self):
         """generates samples between -1 and +1 from gen_freq_bits()
