@@ -75,13 +75,13 @@ class SSTV(object):
         spms = self.samples_per_sec / 1000
         param = 0
         samples = 0
+        factor = 2 * pi / self.samples_per_sec
         for freq, msec in self.gen_freq_bits():
             offset = param
             samples += spms * msec
             tx = floor(samples)
             for sample in xrange(int(tx)):
-                t = sample / self.samples_per_sec
-                param = t * freq * 2 * pi + offset
+                param = sample * freq * factor + offset
                 yield sin(param)
             samples -= tx
 
