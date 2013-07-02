@@ -5,9 +5,9 @@ from sstv import byte_to_freq, FREQ_BLACK
 from grayscale import GrayscaleSSTV
 
 
-class ColorSSTV(GrayscaleSSTV):
-    RED, GREEN, BLUE = range(3)
+RED, GREEN, BLUE = range(3)
 
+class ColorSSTV(GrayscaleSSTV):
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
         image = self.image.load()
@@ -28,7 +28,7 @@ class ColorSSTV(GrayscaleSSTV):
 
 
 class MartinM1(ColorSSTV):
-    COLOR_SEQ = (ColorSSTV.GREEN, ColorSSTV.BLUE, ColorSSTV.RED)
+    COLOR_SEQ = (GREEN, BLUE, RED)
     VIS_CODE = 0x2c
     WIDTH = 320
     HEIGHT = 256
@@ -37,7 +37,7 @@ class MartinM1(ColorSSTV):
     INTER_CH_GAP = 0.572
 
     def before_channel(self, index):
-        if index == ColorSSTV.GREEN:
+        if index == GREEN:
             yield FREQ_BLACK, self.INTER_CH_GAP
 
     def after_channel(self, index):
