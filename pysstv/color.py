@@ -9,10 +9,9 @@ class ColorSSTV(GrayscaleSSTV):
     RED, GREEN, BLUE = range(3)
 
     def encode_line(self, line):
-        cs = self.COLOR_SEQ
         msec_pixel = self.SCAN / self.WIDTH
         image = self.image.load()
-        for index in cs:
+        for index in self.COLOR_SEQ:
             for item in self.before_channel(index):
                 yield item
             for col in xrange(self.WIDTH):
