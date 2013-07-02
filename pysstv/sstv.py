@@ -79,9 +79,10 @@ class SSTV(object):
         for freq, msec in self.gen_freq_bits():
             samples += spms * msec
             tx = int(samples)
+            freq_factor = freq * factor
             for sample in xrange(tx):
-                yield sin(sample * freq * factor + offset)
-            offset += sample * freq * factor
+                yield sin(sample * freq_factor + offset)
+            offset += sample * freq_factor
             samples -= tx
 
     def gen_freq_bits(self):
