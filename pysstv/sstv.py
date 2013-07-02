@@ -62,7 +62,7 @@ class SSTV(object):
         highest = amp - 1
         alias_cycle = cycle((alias * (random() - 0.5) for _ in xrange(1024)))
         for value, alias_item in izip(self.gen_values(), alias_cycle):
-            sample = int(round(value * amp + alias_item))
+            sample = int(value * amp + alias_item)
             yield (lowest if sample <= lowest else
                 sample if sample <= highest else highest)
 
