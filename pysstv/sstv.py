@@ -76,6 +76,7 @@ class SSTV(object):
         offset = 0
         samples = 0
         factor = 2 * pi / self.samples_per_sec
+        sample = 0
         for freq, msec in self.gen_freq_bits():
             samples += spms * msec
             tx = int(samples)
