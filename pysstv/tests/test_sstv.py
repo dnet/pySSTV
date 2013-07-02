@@ -59,7 +59,8 @@ class TestSSTV(unittest.TestCase):
         sstv.random = MagicMock(return_value=0.4)  # xkcd:221
         expected = pickle.load(open(get_asset_filename("SSTV_gen_samples.p")))
         actual = list(islice(gen_values, 0, 1000))
-        self.assertEqual(expected, actual)
+        for e, a in izip(expected, actual):
+            self.assertAlmostEqual(e, a, delta=1)
 
     def test_write_wav(self):
         self.maxDiff = None
