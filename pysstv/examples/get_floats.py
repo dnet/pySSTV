@@ -7,7 +7,6 @@ single precision format, so that it can be processed outside PySSTV.
 Usage example: get_floats.py | play -r 44100 -t f32 -c 1 --norm -
 """
 
-from pysstv.sstv import SSTV
 from PIL import Image
 from pysstv.grayscale import Robot8BW
 import struct, sys
