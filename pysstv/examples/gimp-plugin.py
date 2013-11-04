@@ -77,6 +77,13 @@ class ProgressCanvas(Canvas):
             height *= 2
         if (width, height) != image.size:
             image = image.resize((width, height))
+        pixels = image.load()
+        RED, GREEN, BLUE = range(3)
+        self.colors = ['#{0:02x}{1:02x}{2:02x}'.format(
+            255 - sum(pixels[x, y][RED]   for x in xrange(width)) / width,
+            255 - sum(pixels[x, y][GREEN] for x in xrange(width)) / width,
+            255 - sum(pixels[x, y][BLUE]  for x in xrange(width)) / width)
+            for y in xrange(height)]
         Canvas.__init__(self, master, width=width, height=height)
         self.tk_img = ImageTk.PhotoImage(image)
         self.update_image()
@@ -85,7 +92,7 @@ class ProgressCanvas(Canvas):
         image = self.tk_img
         self.create_image(0, 0, anchor=NW, image=image)
         if line is not None:
-            self.create_line(0, line, image.width(), line, fill="#FFFF00")
+            self.create_line(0, line, image.width(), line, fill=self.colors[line])
 
 
 def transmit_current_image(image, drawable, mode, vox, fskid):
