@@ -32,7 +32,12 @@ class AudioThread(Thread):
 
 class Transmitter(object):
     def __init__(self, sstv, root):
+        def encode_line_hooked(line):
+            print line # TODO show progress on GUI
+            return self.original_encode_line(line)
         self.sstv = sstv
+        self.original_encode_line = sstv.encode_line
+        sstv.encode_line = encode_line_hooked
         self.root = root
         self.tx_enabled = IntVar()
         self.audio_thread = None
