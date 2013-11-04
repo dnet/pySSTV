@@ -7,7 +7,7 @@
 from gimpfu import register, main, pdb, PF_BOOL, PF_STRING, PF_RADIO
 from tempfile import mkstemp
 from PIL import Image, ImageTk
-from Tkinter import Tk, Label, Button, Checkbutton, IntVar
+from Tkinter import Tk, Label, Button, Checkbutton, IntVar, Frame, LEFT
 from pysstv import __main__ as pysstv_main
 from pysstv.examples.pyaudio_sstv import PyAudioSSTV
 from pysstv.sstv import SSTV
@@ -61,7 +61,7 @@ class Transmitter(object):
     def audio_thread_ended(self):
         self.tx_enabled.set(0)
 
-    def close(self, e):
+    def close(self):
         self.root.destroy()
 
 
@@ -83,12 +83,12 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         img_widget = Label(root, image=tk_img)
         img_widget.image = tk_img
         img_widget.pack()
+        buttons = Frame(root)
         for text, tram in (('TX', tm), ('1750 Hz', tm1750)):
-            Checkbutton(root, text=text, indicatoron=False, padx=5, pady=5,
-                    variable=tram.tx_enabled, command=tram.start_stop_tx).pack()
-        close_btn = Button(root, text="Close")
-        close_btn.bind('<Button-1>', tm.close)
-        close_btn.pack()
+            Checkbutton(buttons, text=text, indicatoron=False, padx=5, pady=5,
+                    variable=tram.tx_enabled, command=tram.start_stop_tx).pack(side=LEFT)
+        Button(buttons, text="Close", command=tm.close).pack(side=LEFT)
+        buttons.pack()
         root.mainloop()
     finally:
         os.remove(png_fn)
