@@ -10,6 +10,8 @@ from PIL import Image, ImageTk
 from Tkinter import Tk, Label, Button, Checkbutton, IntVar
 from pysstv import __main__ as pysstv_main
 from pysstv.examples.pyaudio_sstv import PyAudioSSTV
+from pysstv.sstv import SSTV
+from itertools import repeat
 from threading import Thread
 import os
 
@@ -28,6 +30,13 @@ class AudioThread(Thread):
     def stop(self):
         self.pas.sampler = []
         self.pas = None
+
+
+class Sine1750(SSTV):
+    encode_line = None
+
+    def gen_freq_bits(self):
+        return repeat((1750, 1000))
 
 
 class Transmitter(object):
@@ -69,6 +78,7 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         if fskid:
             s.add_fskid_text(fskid)
         tm = Transmitter(s, root)
+        tm1750 = Transmitter(Sine1750(None, 44100, 16), root)
         tk_img = ImageTk.PhotoImage(pil_img)
         img_widget = Label(root, image=tk_img)
         img_widget.image = tk_img
@@ -76,6 +86,9 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         start_btn = Checkbutton(root, text="TX", indicatoron=False, padx=5,
                 pady=5, variable=tm.tx_enabled, command=tm.start_stop_tx)
         start_btn.pack()
+        s1750_btn = Checkbutton(root, text="1750 Hz", indicatoron=False, padx=5,
+                pady=5, variable=tm1750.tx_enabled, command=tm1750.start_stop_tx)
+        s1750_btn.pack()
         close_btn = Button(root, text="Close")
         close_btn.bind('<Button-1>', tm.close)
         close_btn.pack()
