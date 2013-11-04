@@ -72,6 +72,11 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
     try:
         pdb.gimp_file_save(image, drawable, png_fn, png_fn)
         pil_img = Image.open(png_fn)
+        sstv_size = sstv.WIDTH, sstv.HEIGHT
+        if pil_img.size != sstv_size:
+            pil_img = pil_img.resize(sstv_size, Image.ANTIALIAS)
+        if 'grayscale' in sstv.__module__:
+            pil_img = pil_img.convert('LA').convert('RGB')
         root = Tk()
         s = sstv(pil_img, 44100, 16)
         s.vox_enabled = vox
