@@ -83,12 +83,9 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         img_widget = Label(root, image=tk_img)
         img_widget.image = tk_img
         img_widget.pack()
-        start_btn = Checkbutton(root, text="TX", indicatoron=False, padx=5,
-                pady=5, variable=tm.tx_enabled, command=tm.start_stop_tx)
-        start_btn.pack()
-        s1750_btn = Checkbutton(root, text="1750 Hz", indicatoron=False, padx=5,
-                pady=5, variable=tm1750.tx_enabled, command=tm1750.start_stop_tx)
-        s1750_btn.pack()
+        for text, tram in (('TX', tm), ('1750 Hz', tm1750)):
+            Checkbutton(root, text=text, indicatoron=False, padx=5, pady=5,
+                    variable=tram.tx_enabled, command=tram.start_stop_tx).pack()
         close_btn = Button(root, text="Close")
         close_btn.bind('<Button-1>', tm.close)
         close_btn.pack()
