@@ -7,7 +7,7 @@
 from gimpfu import register, main, pdb, PF_BOOL, PF_STRING, PF_RADIO
 from tempfile import mkstemp
 from PIL import Image, ImageTk
-from Tkinter import Tk, Label, Button, Checkbutton, IntVar, Frame, LEFT
+from Tkinter import Tk, Canvas, Button, Checkbutton, IntVar, Frame, LEFT, NW
 from pysstv import __main__ as pysstv_main
 from pysstv.examples.pyaudio_sstv import PyAudioSSTV
 from pysstv.sstv import SSTV
@@ -40,10 +40,11 @@ class Sine1750(SSTV):
 
 
 class Transmitter(object):
-    def __init__(self, sstv, root):
+    def __init__(self, sstv, root, progress):
         def encode_line_hooked(line):
-            print line # TODO show progress on GUI
+            progress.update_image(line)
             return self.original_encode_line(line)
+        self.progress = progress
         self.sstv = sstv
         self.original_encode_line = sstv.encode_line
         sstv.encode_line = encode_line_hooked
@@ -57,12 +58,30 @@ class Transmitter(object):
             self.audio_thread.start()
         elif self.audio_thread is not None:
             self.audio_thread.stop()
+            self.progress.update_image()
 
     def audio_thread_ended(self):
         self.tx_enabled.set(0)
 
     def close(self):
         self.root.destroy()
+
+
+class ProgressCanvas(Canvas):
+    def __init__(self, master, image):
+        width, height = image.size
+        if height / float(width) > 1.5:
+            width *= 2
+            image = image.resize((width, height))
+        Canvas.__init__(self, master, width=width, height=height)
+        self.tk_img = ImageTk.PhotoImage(image)
+        self.update_image()
+
+    def update_image(self, line=None):
+        image = self.tk_img
+        self.create_image(0, 0, anchor=NW, image=image)
+        if line is not None:
+            self.create_line(0, line, image.width(), line, fill="#FFFF00")
 
 
 def transmit_current_image(image, drawable, mode, vox, fskid):
@@ -82,12 +101,10 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         s.vox_enabled = vox
         if fskid:
             s.add_fskid_text(fskid)
-        tm = Transmitter(s, root)
-        tm1750 = Transmitter(Sine1750(None, 44100, 16), root)
-        tk_img = ImageTk.PhotoImage(pil_img)
-        img_widget = Label(root, image=tk_img)
-        img_widget.image = tk_img
-        img_widget.pack()
+        pc = ProgressCanvas(root, pil_img)
+        pc.pack()
+        tm = Transmitter(s, root, pc)
+        tm1750 = Transmitter(Sine1750(None, 44100, 16), None, None)
         buttons = Frame(root)
         for text, tram in (('TX', tm), ('1750 Hz', tm1750)):
             Checkbutton(buttons, text=text, indicatoron=False, padx=5, pady=5,
