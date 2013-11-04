@@ -9,6 +9,7 @@ from tempfile import mkstemp
 from PIL import Image, ImageTk
 from Tkinter import Tk, Label, Button
 from pysstv import __main__ as pysstv_main
+from pysstv.examples.pyaudio_sstv import PyAudioSSTV
 import os
 
 MODULE_MAP = pysstv_main.build_module_map()
@@ -19,7 +20,7 @@ class Transmitter(object):
         self.root = root
 
     def start_tx(self, e):
-        pdb.gimp_message("TX!") # TODO
+        PyAudioSSTV(self.sstv).execute()
 
     def close(self, e):
         self.root.destroy()
