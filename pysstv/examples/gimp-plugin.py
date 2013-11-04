@@ -10,20 +10,40 @@ from PIL import Image, ImageTk
 from Tkinter import Tk, Label, Button
 from pysstv import __main__ as pysstv_main
 from pysstv.examples.pyaudio_sstv import PyAudioSSTV
+from threading import Thread
 import os
 
 MODULE_MAP = pysstv_main.build_module_map()
+
+class AudioThread(Thread):
+    def __init__(self, sstv):
+        Thread.__init__(self)
+        self.pas = PyAudioSSTV(sstv)
+
+    def run(self):
+        self.pas.execute()
+
+    def stop(self):
+        self.pas.sampler = []
+
 
 class Transmitter(object):
     def __init__(self, sstv, root):
         self.sstv = sstv
         self.root = root
+        self.audio_thread = None
 
     def start_tx(self, e):
-        PyAudioSSTV(self.sstv).execute()
+        self.audio_thread = AudioThread(self.sstv)
+        self.audio_thread.start()
+
+    def stop_tx(self, e):
+        if self.audio_thread is not None:
+            self.audio_thread.stop()
 
     def close(self, e):
         self.root.destroy()
+
 
 def transmit_current_image(image, drawable, mode, vox, fskid):
     sstv = MODULE_MAP[mode]
@@ -44,6 +64,9 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         img_widget.pack()
         start_btn = Button(root, text="TX")
         start_btn.bind('<Button-1>', tm.start_tx)
+        start_btn.pack()
+        start_btn = Button(root, text="Stop")
+        start_btn.bind('<Button-1>', tm.stop_tx)
         start_btn.pack()
         close_btn = Button(root, text="Close")
         close_btn.bind('<Button-1>', tm.close)
