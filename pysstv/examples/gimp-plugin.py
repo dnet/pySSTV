@@ -7,7 +7,7 @@
 from gimpfu import register, main, pdb, PF_BOOL, PF_STRING, PF_RADIO
 from tempfile import mkstemp
 from PIL import Image, ImageTk
-from Tkinter import Tk, Label, Button
+from Tkinter import Tk, Label, Button, Checkbutton, IntVar
 from pysstv import __main__ as pysstv_main
 from pysstv.examples.pyaudio_sstv import PyAudioSSTV
 from threading import Thread
@@ -16,30 +16,36 @@ import os
 MODULE_MAP = pysstv_main.build_module_map()
 
 class AudioThread(Thread):
-    def __init__(self, sstv):
+    def __init__(self, sstv, parent):
         Thread.__init__(self)
         self.pas = PyAudioSSTV(sstv)
+        self.parent = parent
 
     def run(self):
         self.pas.execute()
+        self.parent.audio_thread_ended()
 
     def stop(self):
         self.pas.sampler = []
+        self.pas = None
 
 
 class Transmitter(object):
     def __init__(self, sstv, root):
         self.sstv = sstv
         self.root = root
+        self.tx_enabled = IntVar()
         self.audio_thread = None
 
-    def start_tx(self, e):
-        self.audio_thread = AudioThread(self.sstv)
-        self.audio_thread.start()
-
-    def stop_tx(self, e):
-        if self.audio_thread is not None:
+    def start_stop_tx(self):
+        if self.tx_enabled.get():
+            self.audio_thread = AudioThread(self.sstv, self)
+            self.audio_thread.start()
+        elif self.audio_thread is not None:
             self.audio_thread.stop()
+
+    def audio_thread_ended(self):
+        self.tx_enabled.set(0)
 
     def close(self, e):
         self.root.destroy()
@@ -62,11 +68,8 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         img_widget = Label(root, image=tk_img)
         img_widget.image = tk_img
         img_widget.pack()
-        start_btn = Button(root, text="TX")
-        start_btn.bind('<Button-1>', tm.start_tx)
-        start_btn.pack()
-        start_btn = Button(root, text="Stop")
-        start_btn.bind('<Button-1>', tm.stop_tx)
+        start_btn = Checkbutton(root, text="TX", indicatoron=False, padx=5,
+                pady=5, variable=tm.tx_enabled, command=tm.start_stop_tx)
         start_btn.pack()
         close_btn = Button(root, text="Close")
         close_btn.bind('<Button-1>', tm.close)
