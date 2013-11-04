@@ -72,6 +72,10 @@ class ProgressCanvas(Canvas):
         width, height = image.size
         if height / float(width) > 1.5:
             width *= 2
+        elif width < 200:
+            width *= 2
+            height *= 2
+        if (width, height) != image.size:
             image = image.resize((width, height))
         Canvas.__init__(self, master, width=width, height=height)
         self.tk_img = ImageTk.PhotoImage(image)
