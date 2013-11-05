@@ -133,8 +133,7 @@ class ProgressCanvas(Canvas):
 
 def transmit_current_image(image, drawable, mode, vox, fskid):
     sstv = MODULE_MAP[mode]
-    handle, png_fn = mkstemp(suffix='.png', prefix='pysstv-gimp-')
-    os.fdopen(handle).close()
+    png_fn = generate_png_filename()
     try:
         pdb.gimp_file_save(image, drawable, png_fn, png_fn)
         pil_img = Image.open(png_fn)
@@ -165,6 +164,11 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
             obj.stop()
     finally:
         os.remove(png_fn)
+
+def generate_png_filename():
+    handle, png_fn = mkstemp(suffix='.png', prefix='pysstv-gimp-')
+    os.fdopen(handle).close()
+    return png_fn
 
 register(
         "pysstv_for_gimp",
