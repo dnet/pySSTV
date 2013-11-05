@@ -70,6 +70,7 @@ class Transmitter(object):
 
 class ProgressCanvas(Canvas):
     def __init__(self, master, image):
+        self.height_ratio = 1
         width, height = image.size
         pixels = image.load()
         RED, GREEN, BLUE = range(3)
@@ -83,6 +84,7 @@ class ProgressCanvas(Canvas):
         elif width < 200:
             width *= 2
             height *= 2
+            self.height_ratio = 2
         if (width, height) != image.size:
             image = image.resize((width, height))
         Canvas.__init__(self, master, width=width, height=height)
@@ -93,7 +95,9 @@ class ProgressCanvas(Canvas):
         image = self.tk_img
         self.create_image(0, 0, anchor=NW, image=image)
         if line is not None:
-            self.create_line(0, line, image.width(), line, fill=self.colors[line])
+            fill = self.colors[line]
+            line *= self.height_ratio
+            self.create_line(0, line, image.width(), line, fill=fill)
 
 
 def transmit_current_image(image, drawable, mode, vox, fskid):
