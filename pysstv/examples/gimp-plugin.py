@@ -13,7 +13,7 @@ from pysstv.examples.pyaudio_sstv import PyAudioSSTV
 from pysstv.sstv import SSTV
 from itertools import repeat
 from threading import Thread
-from Queue import Queue
+from Queue import Queue, Empty
 import os
 
 MODULE_MAP = pysstv_main.build_module_map()
@@ -82,13 +82,20 @@ class CanvasUpdater(Thread):
         Thread.__init__(self)
         self.progress = progress
         self.queue = Queue()
+        self.should_run = True
+
+    def stop(self):
+        self.should_run = False
 
     def update_image(self, line=None):
         self.queue.put(line)
 
     def run(self):
-        while True:
-            self.progress.update_image(self.queue.get())
+        while self.should_run:
+            try:
+                self.progress.update_image(self.queue.get(timeout=0.5))
+            except Empty:
+                pass
 
 
 class ProgressCanvas(Canvas):
@@ -155,6 +162,7 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         root.mainloop()
         tm.stop()
         tm1750.stop()
+        cu.stop()
     finally:
         os.remove(png_fn)
 
