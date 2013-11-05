@@ -52,9 +52,11 @@ class Transmitter(object):
         self.root = root
         self.tx_enabled = IntVar()
         self.audio_thread = None
+        self.stopping = False
 
     def start_stop_tx(self):
         if self.tx_enabled.get():
+            self.stopping = False
             self.audio_thread = AudioThread(self.sstv, self)
             self.audio_thread.start()
         else:
@@ -64,10 +66,12 @@ class Transmitter(object):
 
     def stop(self):
         if self.audio_thread is not None:
+            self.stopping = True
             self.audio_thread.stop()
 
     def audio_thread_ended(self):
-        self.tx_enabled.set(0)
+        if not self.stopping:
+            self.tx_enabled.set(0)
 
     def close(self):
         self.root.destroy()
@@ -149,6 +153,8 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         Button(buttons, text="Close", command=tm.close).pack(side=LEFT)
         buttons.pack()
         root.mainloop()
+        tm.stop()
+        tm1750.stop()
     finally:
         os.remove(png_fn)
 
