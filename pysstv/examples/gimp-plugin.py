@@ -58,7 +58,8 @@ class Transmitter(object):
             self.audio_thread.start()
         elif self.audio_thread is not None:
             self.audio_thread.stop()
-            self.progress.update_image()
+            if self.progress is not None:
+                self.progress.update_image()
 
     def audio_thread_ended(self):
         self.tx_enabled.set(0)
