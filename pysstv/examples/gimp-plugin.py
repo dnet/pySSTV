@@ -13,6 +13,7 @@ from pysstv.examples.pyaudio_sstv import PyAudioSSTV
 from pysstv.sstv import SSTV
 from itertools import repeat
 from threading import Thread
+from Queue import Queue
 import os
 
 MODULE_MAP = pysstv_main.build_module_map()
@@ -72,6 +73,20 @@ class Transmitter(object):
         self.root.destroy()
 
 
+class CanvasUpdater(Thread):
+    def __init__(self, progress):
+        Thread.__init__(self)
+        self.progress = progress
+        self.queue = Queue()
+
+    def update_image(self, line=None):
+        self.queue.put(line)
+
+    def run(self):
+        while True:
+            self.progress.update_image(self.queue.get())
+
+
 class ProgressCanvas(Canvas):
     def __init__(self, master, image):
         self.height_ratio = 1
@@ -123,7 +138,9 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
             s.add_fskid_text(fskid)
         pc = ProgressCanvas(root, pil_img)
         pc.pack()
-        tm = Transmitter(s, root, pc)
+        cu = CanvasUpdater(pc)
+        cu.start()
+        tm = Transmitter(s, root, cu)
         tm1750 = Transmitter(Sine1750(None, 44100, 16), None, None)
         buttons = Frame(root)
         for text, tram in (('TX', tm), ('1750 Hz', tm1750)):
