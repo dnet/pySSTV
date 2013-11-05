@@ -138,15 +138,11 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         pdb.gimp_file_save(image, drawable, png_fn, png_fn)
         pil_img = match_image_with_sstv_mode(Image.open(png_fn), sstv)
         root = Tk()
-        s = sstv(pil_img, 44100, 16)
-        s.vox_enabled = vox
-        if fskid:
-            s.add_fskid_text(fskid)
         pc = ProgressCanvas(root, pil_img)
         pc.pack()
         cu = CanvasUpdater(pc)
         cu.start()
-        tm = Transmitter(s, root, cu)
+        tm = Transmitter(init_sstv(sstv, pil_img, vox, fskid), root, cu)
         tm1750 = Transmitter(Sine1750(None, 44100, 16), None, None)
         buttons = Frame(root)
         for text, tram in (('TX', tm), ('1750 Hz', tm1750)):
@@ -172,6 +168,13 @@ def match_image_with_sstv_mode(image, mode):
     if 'grayscale' in mode.__module__:
         image = image.convert('LA').convert('RGB')
     return image
+
+def init_sstv(mode, image, vox, fskid):
+    s = mode(image, 44100, 16)
+    s.vox_enabled = vox
+    if fskid:
+        s.add_fskid_text(fskid)
+    return s
 
 register(
         "pysstv_for_gimp",
