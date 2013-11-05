@@ -71,13 +71,6 @@ class Transmitter(object):
 class ProgressCanvas(Canvas):
     def __init__(self, master, image):
         width, height = image.size
-        if height / float(width) > 1.5:
-            width *= 2
-        elif width < 200:
-            width *= 2
-            height *= 2
-        if (width, height) != image.size:
-            image = image.resize((width, height))
         pixels = image.load()
         RED, GREEN, BLUE = range(3)
         self.colors = ['#{0:02x}{1:02x}{2:02x}'.format(
@@ -85,6 +78,13 @@ class ProgressCanvas(Canvas):
             255 - sum(pixels[x, y][GREEN] for x in xrange(width)) / width,
             255 - sum(pixels[x, y][BLUE]  for x in xrange(width)) / width)
             for y in xrange(height)]
+        if height / float(width) > 1.5:
+            width *= 2
+        elif width < 200:
+            width *= 2
+            height *= 2
+        if (width, height) != image.size:
+            image = image.resize((width, height))
         Canvas.__init__(self, master, width=width, height=height)
         self.tk_img = ImageTk.PhotoImage(image)
         self.update_image()
