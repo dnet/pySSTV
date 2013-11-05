@@ -29,8 +29,9 @@ class AudioThread(Thread):
         self.parent.audio_thread_ended()
 
     def stop(self):
-        self.pas.sampler = []
-        self.pas = None
+        if self.pas is not None:
+            self.pas.sampler = []
+            self.pas = None
 
 
 class Sine1750(SSTV):
