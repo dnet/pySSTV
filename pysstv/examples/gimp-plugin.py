@@ -161,9 +161,8 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         Button(buttons, text="Close", command=tm.close).pack(side=LEFT)
         buttons.pack()
         root.mainloop()
-        tm.stop()
-        tm1750.stop()
-        cu.stop()
+        for obj in (tm, tm1750, cu):
+            obj.stop()
     finally:
         os.remove(png_fn)
 
