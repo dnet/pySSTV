@@ -158,6 +158,9 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
 def image_gimp_to_pil(image):
     try:
         sandbox = image.duplicate()
+        for layer in sandbox.layers:
+            if not layer.visible:
+                sandbox.remove_layer(layer)
         sandbox.merge_visible_layers(CLIP_TO_IMAGE)
         layer = sandbox.layers[0]
         if not layer.is_rgb:
