@@ -105,9 +105,9 @@ class ProgressCanvas(Canvas):
         pixels = image.load()
         RED, GREEN, BLUE = range(3)
         self.colors = ['#{0:02x}{1:02x}{2:02x}'.format(
-            255 - sum(pixels[x, y][RED]   for x in xrange(width)) / width,
-            255 - sum(pixels[x, y][GREEN] for x in xrange(width)) / width,
-            255 - sum(pixels[x, y][BLUE]  for x in xrange(width)) / width)
+            contrast(sum(pixels[x, y][RED]   for x in xrange(width)) / width),
+            contrast(sum(pixels[x, y][GREEN] for x in xrange(width)) / width),
+            contrast(sum(pixels[x, y][BLUE]  for x in xrange(width)) / width))
             for y in xrange(height)]
         if height / float(width) > 1.5:
             width *= 2
@@ -130,6 +130,12 @@ class ProgressCanvas(Canvas):
             line *= self.height_ratio
             self.create_line(0, line, image.width(), line, fill=fill)
 
+
+def contrast(value):
+    if 80 < value < 160:
+        return value + (80 if value < 120 else -80)
+    else:
+        return 255 - value
 
 def transmit_current_image(image, drawable, mode, vox, fskid):
     sstv = MODULE_MAP[mode]
