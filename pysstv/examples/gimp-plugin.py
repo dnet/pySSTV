@@ -121,6 +121,7 @@ class ProgressCanvas(Canvas):
         Canvas.__init__(self, master, width=width, height=height)
         self.tk_img = ImageTk.PhotoImage(image)
         self.update_image()
+        self.pack()
 
     def update_image(self, line=None):
         image = self.tk_img
@@ -138,9 +139,7 @@ def transmit_current_image(image, drawable, mode, vox, fskid):
         pdb.gimp_file_save(image, drawable, png_fn, png_fn)
         pil_img = match_image_with_sstv_mode(Image.open(png_fn), sstv)
         root = Tk()
-        pc = ProgressCanvas(root, pil_img)
-        pc.pack()
-        cu = CanvasUpdater(pc)
+        cu = CanvasUpdater(ProgressCanvas(root, pil_img))
         cu.start()
         tm = Transmitter(init_sstv(sstv, pil_img, vox, fskid), root, cu)
         tm1750 = Transmitter(Sine1750(None, 44100, 16), None, None)
