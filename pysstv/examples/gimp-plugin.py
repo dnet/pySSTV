@@ -4,8 +4,7 @@
 # copy to ~/.gimp-2.8/plug-ins/
 # dependencies: GIMP 2.8, python-imaging-tk
 
-from gimpfu import register, main, pdb, PF_BOOL, PF_STRING, PF_RADIO
-from tempfile import mkstemp
+from gimpfu import register, main, pdb, PF_BOOL, PF_STRING, PF_RADIO, CLIP_TO_IMAGE
 from PIL import Image, ImageTk
 from Tkinter import Tk, Canvas, Button, Checkbutton, IntVar, Frame, LEFT, NW
 from pysstv import __main__ as pysstv_main
@@ -14,7 +13,7 @@ from pysstv.sstv import SSTV
 from itertools import repeat
 from threading import Thread
 from Queue import Queue, Empty
-import os
+import gimp
 
 MODULE_MAP = pysstv_main.build_module_map()
 
@@ -134,31 +133,36 @@ class ProgressCanvas(Canvas):
 
 def transmit_current_image(image, drawable, mode, vox, fskid):
     sstv = MODULE_MAP[mode]
-    png_fn = generate_png_filename()
-    try:
-        pdb.gimp_file_save(image, drawable, png_fn, png_fn)
-        pil_img = match_image_with_sstv_mode(Image.open(png_fn), sstv)
-        root = Tk()
-        cu = CanvasUpdater(ProgressCanvas(root, pil_img))
-        cu.start()
-        tm = Transmitter(init_sstv(sstv, pil_img, vox, fskid), root, cu)
-        tm1750 = Transmitter(Sine1750(None, 44100, 16), None, None)
-        buttons = Frame(root)
-        for text, tram in (('TX', tm), ('1750 Hz', tm1750)):
-            Checkbutton(buttons, text=text, indicatoron=False, padx=5, pady=5,
-                    variable=tram.tx_enabled, command=tram.start_stop_tx).pack(side=LEFT)
-        Button(buttons, text="Close", command=tm.close).pack(side=LEFT)
-        buttons.pack()
-        root.mainloop()
-        for obj in (tm, tm1750, cu):
-            obj.stop()
-    finally:
-        os.remove(png_fn)
+    pil_img = match_image_with_sstv_mode(image_gimp_to_pil(image), sstv)
+    root = Tk()
+    cu = CanvasUpdater(ProgressCanvas(root, pil_img))
+    cu.start()
+    tm = Transmitter(init_sstv(sstv, pil_img, vox, fskid), root, cu)
+    tm1750 = Transmitter(Sine1750(None, 44100, 16), None, None)
+    buttons = Frame(root)
+    for text, tram in (('TX', tm), ('1750 Hz', tm1750)):
+        Checkbutton(buttons, text=text, indicatoron=False, padx=5, pady=5,
+                variable=tram.tx_enabled, command=tram.start_stop_tx).pack(side=LEFT)
+    Button(buttons, text="Close", command=tm.close).pack(side=LEFT)
+    buttons.pack()
+    root.mainloop()
+    for obj in (tm, tm1750, cu):
+        obj.stop()
 
-def generate_png_filename():
-    handle, png_fn = mkstemp(suffix='.png', prefix='pysstv-gimp-')
-    os.fdopen(handle).close()
-    return png_fn
+def image_gimp_to_pil(image):
+    try:
+        sandbox = image.duplicate()
+        sandbox.merge_visible_layers(CLIP_TO_IMAGE)
+        layer = sandbox.layers[0]
+        if not layer.is_rgb:
+            pdb.gimp_image_convert_rgb(sandbox)
+        if layer.has_alpha:
+            pdb.gimp_layer_flatten(layer)
+        w, h = layer.width, layer.height
+        pixels = layer.get_pixel_rgn(0, 0, w, h)[:, :] # all pixels
+        return Image.frombuffer('RGB', (w, h), pixels, 'raw', 'RGB', 0, 0)
+    finally:
+        gimp.delete(sandbox)
 
 def match_image_with_sstv_mode(image, mode):
     mode_size = mode.WIDTH, mode.HEIGHT
