@@ -83,30 +83,22 @@ class Robot36(ColorSSTV):
     C_SCAN = 44
     PORCH = 1.5
     SYNC_PORCH = 3
-    INTER_CH_FREQS = [FREQ_BLACK, FREQ_WHITE]
-    CHANNEL_COEFFS = [
-            (128.0, 112.439, -94.154, -18.285),
-            (128.0, -37.945, -74.494, 112.439)]
+    INTER_CH_FREQS = [None, FREQ_BLACK, FREQ_WHITE]
+
+    def on_init(self):
+        self.yuv = self.image.convert('YCbCr').load()
 
     def encode_line(self, line):
-        image = self.image.load()
-        pixels = [image[col, line] for col in xrange(self.WIDTH)]
-        channel = line % 2
+        pixels = [self.yuv[col, line] for col in xrange(self.WIDTH)]
+        channel = (line % 2) + 1
+        y_pixel_time = self.Y_SCAN / self.WIDTH
+        uv_pixel_time = self.C_SCAN / self.WIDTH
         return chain(
                 [(FREQ_BLACK, self.SYNC_PORCH)],
-                encode_robot_pixels(pixels, (16.0, 65.738, 129.057, 25.064),
-                    self.Y_SCAN / self.WIDTH),
+                ((byte_to_freq(p[0]), y_pixel_time) for p in pixels),
                 [(self.INTER_CH_FREQS[channel], self.INTER_CH_GAP),
                     (FREQ_VIS_START, self.PORCH)],
-                encode_robot_pixels(pixels, self.CHANNEL_COEFFS[channel],
-                    self.C_SCAN / self.WIDTH))
-
-def encode_robot_pixels(pixels, coeffs, pixel_time):
-    cs, cr, cg, cb = coeffs
-    for pixel in pixels:
-        value = cs + (0.003906 * ((cr * pixel[RED]) +
-            (cg * pixel[GREEN]) + (cb * pixel[BLUE])))
-        yield byte_to_freq(value), pixel_time
+                ((byte_to_freq(p[channel]), uv_pixel_time) for p in pixels))
 
 
 MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, Robot36)
