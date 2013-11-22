@@ -9,9 +9,12 @@ from itertools import chain
 RED, GREEN, BLUE = range(3)
 
 class ColorSSTV(GrayscaleSSTV):
+    def on_init(self):
+        self.pixels = self.image.load()
+
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
-        image = self.image.load()
+        image = self.pixels
         for index in self.COLOR_SEQ:
             for item in self.before_channel(index):
                 yield item
