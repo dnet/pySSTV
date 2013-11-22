@@ -64,6 +64,7 @@ Useful links
 
  - receive-only "counterpart": https://github.com/windytan/slowrx
  - free SSTV handbook: http://www.sstv-handbook.com/
+ - robot 36 encoder/decoder in C: https://github.com/xdsopl/robot36/
 
 Dependencies
 ------------

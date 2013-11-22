@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from sstv import byte_to_freq, FREQ_BLACK
+from sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
 from grayscale import GrayscaleSSTV
+from itertools import chain
 
 
 RED, GREEN, BLUE = range(3)
@@ -71,4 +72,41 @@ class ScottieS2(ScottieS1):
     SCAN = 88.064 - ScottieS1.INTER_CH_GAP
     WIDTH = 160
 
-MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2)
+
+class Robot36(ColorSSTV):
+    VIS_CODE = 0x08
+    WIDTH = 320
+    HEIGHT = 240
+    SYNC = 9
+    INTER_CH_GAP = 4.5
+    Y_SCAN = 88
+    C_SCAN = 44
+    PORCH = 1.5
+    SYNC_PORCH = 3
+    INTER_CH_FREQS = [FREQ_BLACK, FREQ_WHITE]
+    CHANNEL_COEFFS = [
+            (128.0, 112.439, -94.154, -18.285),
+            (128.0, -37.945, -74.494, 112.439)]
+
+    def encode_line(self, line):
+        image = self.image.load()
+        pixels = [image[col, line] for col in xrange(self.WIDTH)]
+        channel = line % 2
+        return chain(
+                [(FREQ_BLACK, self.SYNC_PORCH)],
+                encode_robot_pixels(pixels, (16.0, 65.738, 129.057, 25.064),
+                    self.Y_SCAN / self.WIDTH),
+                [(self.INTER_CH_FREQS[channel], self.INTER_CH_GAP),
+                    (FREQ_VIS_START, self.PORCH)],
+                encode_robot_pixels(pixels, self.CHANNEL_COEFFS[channel],
+                    self.C_SCAN / self.WIDTH))
+
+def encode_robot_pixels(pixels, coeffs, pixel_time):
+    cs, cr, cg, cb = coeffs
+    for pixel in pixels:
+        value = cs + (0.003906 * ((cr * pixel[RED]) +
+            (cg * pixel[GREEN]) + (cb * pixel[BLUE])))
+        yield byte_to_freq(value), pixel_time
+
+
+MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, Robot36)
