@@ -69,7 +69,7 @@ class TestSSTV(unittest.TestCase):
         mock_open = MagicMock(return_value=sio)
         with mock.patch('__builtin__.open', mock_open):
             self.s.write_wav('unittest.wav')
-        expected = '8aa1d52b222b411e032ce2bce77d203a'
+        expected = 'dd7eed880ab3360fb79ce09c469deee2'
         data = sio.getvalue()
         actual = hashlib.md5(data).hexdigest()
         self.assertEqual(expected, actual)
