@@ -36,7 +36,7 @@ class Robot24BW(GrayscaleSSTV):
     VIS_CODE = 0x0A
     WIDTH = 320
     HEIGHT = 240
-    SYNC = 12
+    SYNC = 7
     SCAN = 93
 
 MODES = (Robot8BW, Robot24BW)
