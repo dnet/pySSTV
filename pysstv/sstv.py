@@ -33,6 +33,10 @@ class SSTV(object):
         self.vox_enabled = False
         self.fskid_payload = ''
         self.nchannels = 1
+        self.on_init()
+
+    def on_init(self):
+        pass
 
     BITS_TO_STRUCT = {8: 'b', 16: 'h'}
 
