@@ -5,6 +5,8 @@ from sstv import SSTV, byte_to_freq
 
 
 class GrayscaleSSTV(SSTV):
+    def on_init(self):
+        self.pixels = self.image.convert('LA').load()
 
     def gen_image_tuples(self):
         for line in xrange(self.HEIGHT):
@@ -15,11 +17,10 @@ class GrayscaleSSTV(SSTV):
 
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
-        image = self.image.load()
-        pixlen = len(image[0, line])
+        image = self.pixels
         for col in xrange(self.WIDTH):
             pixel = image[col, line]
-            freq_pixel = byte_to_freq(sum(pixel) / pixlen)
+            freq_pixel = byte_to_freq(pixel[0])
             yield freq_pixel, msec_pixel
 
 
