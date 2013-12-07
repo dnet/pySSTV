@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    from monoPIL import Image
 from argparse import ArgumentParser
 from sys import stderr
 import color
