@@ -64,7 +64,7 @@ class ScottieS1(MartinM1):
         return []
 
     def before_channel(self, index):
-        if index == ColorSSTV.RED:
+        if index == RED:
             for item in MartinM1.horizontal_sync(self):
                 yield item
         yield FREQ_BLACK, self.INTER_CH_GAP
