@@ -14,7 +14,7 @@ Command line usage
 
     $ python -m pysstv -h
     usage: __main__.py [-h]
-                  [--mode {MartinM2,MartinM1,Robot24BW,ScottieS2,ScottieS1,Robot8BW}]
+                  [--mode {MartinM2,MartinM1,Robot24BW,ScottieS2,ScottieS1,Robot8BW,PasokonP3,PasokonP5,PasokonP7}]
                   [--rate RATE] [--bits BITS]
                   image.png output.wav
 
@@ -26,7 +26,7 @@ Command line usage
 
     optional arguments:
       -h, --help            show this help message and exit
-      --mode {MartinM2,MartinM1,Robot24BW,ScottieS2,ScottieS1,Robot8BW}
+      --mode {MartinM2,MartinM1,Robot24BW,ScottieS2,ScottieS1,Robot8BW,PasokonP3,PasokonP5,PasokonP7}
                             image mode (default: Martin M1)
       --rate RATE           sampling rate (default: 48000)
       --bits BITS           bits per sample (default: 16)
