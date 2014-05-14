@@ -13,7 +13,8 @@ from pysstv.sstv import SSTV
 from itertools import repeat
 from threading import Thread
 from Queue import Queue, Empty
-import gimp
+from time import sleep
+import gimp, os
 
 MODULE_MAP = pysstv_main.build_module_map()
 
@@ -41,7 +42,7 @@ class Sine1750(SSTV):
 
 
 class Transmitter(object):
-    def __init__(self, sstv, root, progress):
+    def __init__(self, sstv, root, progress, set_ptt_pin, ptt_state):
         def encode_line_hooked(line):
             progress.update_image(line)
             return self.original_encode_line(line)
@@ -53,11 +54,23 @@ class Transmitter(object):
         self.tx_enabled = IntVar()
         self.audio_thread = None
         self.stopping = False
+        self.set_ptt_pin = set_ptt_pin
+        self.ptt_state = ptt_state
+
+    def set_ptt(self, state):
+        if self.set_ptt_pin is None:
+            return
+        if not state:
+            sleep(0.2)
+        self.set_ptt_pin(state != self.ptt_state)
+        if state:
+            sleep(0.2)
 
     def start_stop_tx(self):
         if self.tx_enabled.get():
             self.stopping = False
             self.audio_thread = AudioThread(self.sstv, self)
+            self.set_ptt(True)
             self.audio_thread.start()
         else:
             self.stop()
@@ -68,9 +81,11 @@ class Transmitter(object):
         if self.audio_thread is not None:
             self.stopping = True
             self.audio_thread.stop()
+            self.set_ptt(False)
 
     def audio_thread_ended(self):
         if not self.stopping:
+            self.set_ptt(False)
             self.tx_enabled.set(0)
 
     def close(self):
@@ -137,14 +152,23 @@ def contrast(value):
     else:
         return 255 - value
 
-def transmit_current_image(image, drawable, mode, vox, fskid):
+def set_ptt_pin(port, pin, state):
+    getattr(port, 'set' + pin)(state)
+
+def transmit_current_image(image, drawable, mode, vox, fskid, ptt_port, ptt_pin, ptt_state):
     sstv = MODULE_MAP[mode]
+    if ptt_port is not None:
+        from serial import Serial
+        set_ptt_pin = getattr(Serial(ptt_port), 'set' + ptt_pin)
+        set_ptt_pin(ptt_state)
+    else:
+        set_ptt_pin = None
     pil_img = match_image_with_sstv_mode(image_gimp_to_pil(image), sstv)
     root = Tk()
     cu = CanvasUpdater(ProgressCanvas(root, pil_img))
     cu.start()
-    tm = Transmitter(init_sstv(sstv, pil_img, vox, fskid), root, cu)
-    tm1750 = Transmitter(Sine1750(None, 44100, 16), None, None)
+    tm = Transmitter(init_sstv(sstv, pil_img, vox, fskid), root, cu, set_ptt_pin, ptt_state)
+    tm1750 = Transmitter(Sine1750(None, 44100, 16), None, None, set_ptt_pin, ptt_state)
     buttons = Frame(root)
     for text, tram in (('TX', tm), ('1750 Hz', tm1750)):
         Checkbutton(buttons, text=text, indicatoron=False, padx=5, pady=5,
@@ -188,6 +212,23 @@ def init_sstv(mode, image, vox, fskid):
         s.add_fskid_text(fskid)
     return s
 
+def get_serial_ports():
+    try:
+        if os.name == 'nt':
+            from serial.tools.list_ports_windows import comports
+        elif os.name == 'posix':
+            from serial.tools.list_ports_posix import comports
+        else:
+            raise ImportError("Sorry: no implementation for your"
+            "platform ('%s') available" % (os.name,))
+    except ImportError:
+        yield "(couldn't import PySerial)", None
+    else:
+        yield "(disabled)", None
+        for port, desc, _ in comports():
+            yield '{0} ({1})'.format(port, desc.strip()), port
+
+
 register(
         "pysstv_for_gimp",
         "PySSTV for GIMP",
@@ -202,6 +243,11 @@ register(
                 tuple((n, n) for n in sorted(MODULE_MAP.iterkeys()))),
             (PF_BOOL, "vox", "Include VOX tones", True),
             (PF_STRING, "fskid", "FSK ID", ""),
+            (PF_RADIO, "ptt_port", "PTT port", None,
+                tuple(get_serial_ports())),
+            (PF_RADIO, "ptt_pin", "PTT pin", "RTS",
+                tuple((n, n) for n in ("RTS", "DTR"))),
+            (PF_BOOL, "ptt_state", "PTT inversion", False),
         ],
         [],
         transmit_current_image
