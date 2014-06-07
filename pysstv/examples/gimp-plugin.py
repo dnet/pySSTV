@@ -120,10 +120,10 @@ class ProgressCanvas(Canvas):
         pixels = image.load()
         RED, GREEN, BLUE = range(3)
         self.colors = ['#{0:02x}{1:02x}{2:02x}'.format(
-            contrast(sum(pixels[x, y][RED]   for x in xrange(width)) / width),
-            contrast(sum(pixels[x, y][GREEN] for x in xrange(width)) / width),
-            contrast(sum(pixels[x, y][BLUE]  for x in xrange(width)) / width))
-            for y in xrange(height)]
+            contrast(sum(pixels[x, y][RED]   for x in range(width)) / width),
+            contrast(sum(pixels[x, y][GREEN] for x in range(width)) / width),
+            contrast(sum(pixels[x, y][BLUE]  for x in range(width)) / width))
+            for y in range(height)]
         if height / float(width) > 1.5:
             width *= 2
         elif width < 200:

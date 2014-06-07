@@ -18,7 +18,7 @@ class ColorSSTV(GrayscaleSSTV):
         for index in self.COLOR_SEQ:
             for item in self.before_channel(index):
                 yield item
-            for col in xrange(self.WIDTH):
+            for col in range(self.WIDTH):
                 pixel = image[col, line]
                 freq_pixel = byte_to_freq(pixel[index])
                 yield freq_pixel, msec_pixel
@@ -92,7 +92,7 @@ class Robot36(ColorSSTV):
         self.yuv = self.image.convert('YCbCr').load()
 
     def encode_line(self, line):
-        pixels = [self.yuv[col, line] for col in xrange(self.WIDTH)]
+        pixels = [self.yuv[col, line] for col in range(self.WIDTH)]
         channel = (line % 2) + 1
         y_pixel_time = self.Y_SCAN / self.WIDTH
         uv_pixel_time = self.C_SCAN / self.WIDTH
