@@ -10,10 +10,8 @@ class GrayscaleSSTV(SSTV):
 
     def gen_image_tuples(self):
         for line in range(self.HEIGHT):
-            for item in self.horizontal_sync():
-                yield item
-            for item in self.encode_line(line):
-                yield item
+            yield from self.horizontal_sync()
+            yield from self.encode_line(line)
 
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
