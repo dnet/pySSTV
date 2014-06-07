@@ -5,7 +5,7 @@ import pickle
 from PIL import Image
 
 from pysstv import color
-from common import get_asset_filename
+from pysstv.tests.common import get_asset_filename
 
 
 class TestMartinM1(unittest.TestCase):

@@ -4,8 +4,7 @@ from __future__ import print_function
 from PIL import Image
 from argparse import ArgumentParser
 from sys import stderr
-import color
-import grayscale
+from pysstv import color, grayscale
 
 SSTV_MODULES = [color, grayscale]
 

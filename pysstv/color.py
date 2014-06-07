@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
-from grayscale import GrayscaleSSTV
+from pysstv.sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
+from pysstv.grayscale import GrayscaleSSTV
 from itertools import chain
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from sstv import SSTV, byte_to_freq
+from pysstv.sstv import SSTV, byte_to_freq
 
 
 class GrayscaleSSTV(SSTV):
