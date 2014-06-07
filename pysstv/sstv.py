@@ -51,7 +51,7 @@ class SSTV(object):
             wav.setnchannels(self.nchannels)
             wav.setsampwidth(self.bits // 8)
             wav.setframerate(self.samples_per_sec)
-            wav.writeframes(data.tostring())
+            wav.writeframes(data.tobytes())
 
     def gen_samples(self):
         """generates discrete samples from gen_values()
