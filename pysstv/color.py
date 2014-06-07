@@ -3,9 +3,13 @@ from __future__ import division
 from pysstv.sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
 from pysstv.grayscale import GrayscaleSSTV
 from itertools import chain
+from enum import Enum
 
 
-RED, GREEN, BLUE = range(3)
+class Color(Enum):
+    red = 0
+    green = 1
+    blue = 2
 
 
 class ColorSSTV(GrayscaleSSTV):
@@ -15,22 +19,22 @@ class ColorSSTV(GrayscaleSSTV):
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
         image = self.pixels
-        for index in self.COLOR_SEQ:
-            yield from self.before_channel(index)
+        for color in self.COLOR_SEQ:
+            yield from self.before_channel(color)
             for col in range(self.WIDTH):
                 pixel = image[col, line]
-                freq_pixel = byte_to_freq(pixel[index])
+                freq_pixel = byte_to_freq(pixel[color.value])
                 yield freq_pixel, msec_pixel
-            yield from self.after_channel(index)
+            yield from self.after_channel(color)
 
-    def before_channel(self, index):
+    def before_channel(self, color):
         return []
 
     after_channel = before_channel
 
 
 class MartinM1(ColorSSTV):
-    COLOR_SEQ = (GREEN, BLUE, RED)
+    COLOR_SEQ = (Color.green, Color.blue, Color.red)
     VIS_CODE = 0x2c
     WIDTH = 320
     HEIGHT = 256
@@ -38,11 +42,11 @@ class MartinM1(ColorSSTV):
     SCAN = 146.432
     INTER_CH_GAP = 0.572
 
-    def before_channel(self, index):
-        if index == GREEN:
+    def before_channel(self, color):
+        if color is Color.green:
             yield FREQ_BLACK, self.INTER_CH_GAP
 
-    def after_channel(self, index):
+    def after_channel(self, color):
         yield FREQ_BLACK, self.INTER_CH_GAP
 
 
@@ -61,8 +65,8 @@ class ScottieS1(MartinM1):
     def horizontal_sync(self):
         return []
 
-    def before_channel(self, index):
-        if index == RED:
+    def before_channel(self, color):
+        if color is Color.red:
             yield from MartinM1.horizontal_sync(self)
         yield FREQ_BLACK, self.INTER_CH_GAP
 
@@ -114,7 +118,7 @@ class PasokonP3(ColorSSTV):
     Horizontal Sync - 25 time units of 1200 Hz.
     """
     TIMEUNIT = 1000/4800. # ms
-    COLOR_SEQ = (RED, GREEN, BLUE)
+    COLOR_SEQ = (Color.red, Color.green, Color.blue)
     VIS_CODE = 0x71
     WIDTH = 640
     HEIGHT = 480+16
@@ -122,11 +126,11 @@ class PasokonP3(ColorSSTV):
     SCAN = WIDTH * TIMEUNIT
     INTER_CH_GAP = 5 * TIMEUNIT
     
-    def before_channel(self, index):
-        if index == self.COLOR_SEQ[0]:
+    def before_channel(self, color):
+        if color is Color.red:
             yield FREQ_BLACK, self.INTER_CH_GAP
 
-    def after_channel(self, index):
+    def after_channel(self, color):
         yield FREQ_BLACK, self.INTER_CH_GAP
         
         
