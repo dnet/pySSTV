@@ -16,14 +16,12 @@ class ColorSSTV(GrayscaleSSTV):
         msec_pixel = self.SCAN / self.WIDTH
         image = self.pixels
         for index in self.COLOR_SEQ:
-            for item in self.before_channel(index):
-                yield item
+            yield from self.before_channel(index)
             for col in range(self.WIDTH):
                 pixel = image[col, line]
                 freq_pixel = byte_to_freq(pixel[index])
                 yield freq_pixel, msec_pixel
-            for item in self.after_channel(index):
-                yield item
+            yield from self.after_channel(index)
 
     def before_channel(self, index):
         return []
@@ -65,8 +63,7 @@ class ScottieS1(MartinM1):
 
     def before_channel(self, index):
         if index == RED:
-            for item in MartinM1.horizontal_sync(self):
-                yield item
+            yield from MartinM1.horizontal_sync(self)
         yield FREQ_BLACK, self.INTER_CH_GAP
 
 

@@ -113,8 +113,7 @@ class SSTV(object):
         parity_freq = FREQ_VIS_BIT1 if num_ones % 2 == 1 else FREQ_VIS_BIT0
         yield parity_freq, MSEC_VIS_BIT
         yield FREQ_SYNC, MSEC_VIS_BIT  # stop bit
-        for freq_tuple in self.gen_image_tuples():
-            yield freq_tuple
+        yield from self.gen_image_tuples()
         for fskid_byte in map(ord, self.fskid_payload):
             for _ in range(6):
                 bit = fskid_byte & 1
