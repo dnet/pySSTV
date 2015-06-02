@@ -81,14 +81,18 @@ class SSTV(object):
         samples = 0
         factor = 2 * pi / self.samples_per_sec
         sample = 0
-        for freq, msec in self.gen_freq_bits():
-            samples += spms * msec
-            tx = int(samples)
-            freq_factor = freq * factor
-            for sample in xrange(tx):
-                yield sin(sample * freq_factor + offset)
-            offset += (sample + 1) * freq_factor
-            samples -= tx
+        for freqs, msec in self.gen_freq_bits():
+            if hasattr(freqs, '__iter__'):
+                freqs /= self.samples_per_sec
+            else:
+                freqs = [freqs * factor]
+            for freq_factor in imap(float, freqs):
+                samples += spms * msec
+                tx = int(samples)
+                for sample in xrange(tx):
+                    yield sin(sample * freq_factor + offset)
+                offset += (sample + 1) * freq_factor
+                samples -= tx
 
     def gen_freq_bits(self):
         """generates tuples (freq, msec) that describe a sine wave segment

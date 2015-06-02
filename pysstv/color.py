@@ -1,27 +1,24 @@
 #!/usr/bin/env python
 
 from __future__ import division
-from pysstv.sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
+from pysstv.sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_RANGE, FREQ_VIS_START
 from pysstv.grayscale import GrayscaleSSTV
 from itertools import chain
+import numpy
 
 
 RED, GREEN, BLUE = range(3)
 
 class ColorSSTV(GrayscaleSSTV):
     def on_init(self):
-        self.pixels = self.image.load()
+        self.array = (numpy.array(self.image) * (FREQ_RANGE / 255) + FREQ_BLACK) * (numpy.pi * 2)
 
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
-        image = self.pixels
         for index in self.COLOR_SEQ:
             for item in self.before_channel(index):
                 yield item
-            for col in xrange(self.WIDTH):
-                pixel = image[col, line]
-                freq_pixel = byte_to_freq(pixel[index])
-                yield freq_pixel, msec_pixel
+            yield self.array[line,:self.WIDTH,index], msec_pixel
             for item in self.after_channel(index):
                 yield item
 
