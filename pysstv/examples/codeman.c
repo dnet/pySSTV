@@ -3,7 +3,7 @@
 
 #include "codegen.c"
 
-void main() {
+int main() {
 	uint32_t offset, size;
 	FILE *f = fopen("320x256rgb.bmp", "r");
 	fseek(f, 0x02, SEEK_SET);
@@ -25,4 +25,6 @@ void main() {
 		fwrite(&(freqs[i]), 4, 1, stdout);
 		fwrite(&(msecs[i]), 4, 1, stdout);
 	}
+
+	return 0;
 }
