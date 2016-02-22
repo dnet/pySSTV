@@ -50,10 +50,10 @@ def main(sstv_class=None):
         raise NotImplementedError()
     sstv = sstv_class(Image('img'), 44100, 16)
     n = 0
-    print '#define ROW(x) x'
-    print '#define COL(x) x'
-    print '#define RGB(x) (2 - (x))'
-    print 'void convert(unsigned char *img, float *freqs, float *msecs) {\nint frq = 0;'
+    yield '#define ROW(x) x'
+    yield '#define COL(x) x'
+    yield '#define RGB(x) (2 - (x))'
+    yield 'void convert(unsigned char *img, float *freqs, float *msecs) {\nint frq = 0;'
     history = []
     lut = {}
     same_as = {}
@@ -71,13 +71,13 @@ def main(sstv_class=None):
     mgen = iter(gen_matches(same_as, history, n))
     m_start, m_len, m_end = next(mgen)
     for i in xrange(same_as[m_start]):
-        print history[i][0]
-    print 'for (int row = {0}; row >= 0; row -= {1}) {{'.format(
+        yield history[i][0]
+    yield 'for (int row = {0}; row >= 0; row -= {1}) {{'.format(
             (sstv.HEIGHT - 1) * sstv.WIDTH, sstv.WIDTH)
     for i in xrange(same_as[m_start], same_as[m_start] + m_len - 1):
-        print ' ', history[i][1]
-    print '}'
-    print '}}\n\n#define FREQ_COUNT {0}'.format(n)
+        yield ' ' + history[i][1]
+    yield '}'
+    yield '}}\n\n#define FREQ_COUNT {0}'.format(n)
 
 
 
