@@ -40,10 +40,15 @@ class Image(object):
 from pysstv.color import MartinM1
 import re
 
+supported = [MartinM1]
 ROW_RE = re.compile(r'ROW\(\d+\)')
 
-def main():
-    sstv = MartinM1(Image('img'), 44100, 16)
+def main(sstv_class=None):
+    if sstv_class is None:
+        sstv_class = MartinM1
+    elif sstv_class not in supported:
+        raise NotImplementedError()
+    sstv = sstv_class(Image('img'), 44100, 16)
     n = 0
     print '#define ROW(x) x'
     print '#define COL(x) x'
