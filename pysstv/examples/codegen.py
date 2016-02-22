@@ -109,6 +109,31 @@ def gen_matches(same_as, history, n):
                     cur_start = i
                     cur_end = tmp
 
+def test():
+    from subprocess import Popen, PIPE, check_output
+    from os import remove, path
+    from PIL import Image
+    import struct
+    exe = './codegen-test-executable'
+    try:
+        for sstv_class in supported:
+            print 'Testing', sstv_class
+            gcc = Popen(['gcc', '-xc', '-o', exe, '-'], stdin=PIPE)
+            with open(path.join(path.dirname(__file__), 'codeman.c')) as cm:
+                gcc.communicate(cm.read().replace('#include "codegen.c"', '\n'.join(main(sstv_class))))
+            gen = check_output([exe])
+            img = Image.open("320x256rgb.png")
+            sstv = sstv_class(img, 44100, 16)
+            for n, (freq, msec) in enumerate(sstv.gen_freq_bits()):
+                assert gen[n * 8:(n + 1) * 8] == struct.pack('ff', freq, msec)
+        print 'OK'
+    finally:
+        remove(exe)
+
 
 if __name__ == '__main__':
-    main()
+    from sys import argv
+    if len(argv) > 1 and argv[1] == 'test':
+        test()
+    else:
+        print '\n'.join(main())
