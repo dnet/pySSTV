@@ -68,8 +68,7 @@ def main(sstv_class=None):
         history.append((printed, key))
         n += 1
     del lut
-    mgen = iter(gen_matches(same_as, history, n))
-    m_start, m_len, m_end = next(mgen)
+    m_start, m_len = gen_matches(same_as, history, n)
     for i in xrange(same_as[m_start]):
         yield history[i][0]
     yield 'for (int row = {0}; row >= 0; row -= {1}) {{'.format(
@@ -99,7 +98,7 @@ def gen_matches(same_as, history, n):
                 cur_end += 1
             else:
                 if tmp is not None and history[tmp][1] == history[cur_end + 1][1]:
-                    yield cur_start, cur_len, cur_end
+                    return cur_start, cur_len
                 tmp = same_as.get(i)
                 if tmp is None:
                     cur_start = None
