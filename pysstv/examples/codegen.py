@@ -111,19 +111,30 @@ def test():
     from subprocess import Popen, PIPE, check_output
     from os import remove, path
     from PIL import Image
+    from datetime import datetime
     import struct
     exe = './codegen-test-executable'
     try:
         for sstv_class in supported:
             print 'Testing', sstv_class
             gcc = Popen(['gcc', '-xc', '-o', exe, '-'], stdin=PIPE)
+            start = datetime.now()
             with open(path.join(path.dirname(__file__), 'codeman.c')) as cm:
                 gcc.communicate(cm.read().replace('#include "codegen.c"', '\n'.join(main(sstv_class))))
+            gen_elapsed = datetime.now() - start
+            print ' - gengcc took', gen_elapsed
+            start = datetime.now()
             gen = check_output([exe])
+            native_elapsed = datetime.now() - start
+            print ' - native took', native_elapsed
             img = Image.open("320x256rgb.png")
             sstv = sstv_class(img, 44100, 16)
+            start = datetime.now()
             for n, (freq, msec) in enumerate(sstv.gen_freq_bits()):
                 assert gen[n * 8:(n + 1) * 8] == struct.pack('ff', freq, msec)
+            python_elapsed = datetime.now() - start
+            print ' - python took', python_elapsed
+            print ' - speedup:', python_elapsed.total_seconds() / native_elapsed.total_seconds()
         print 'OK'
     finally:
         remove(exe)
