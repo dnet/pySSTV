@@ -14,7 +14,7 @@ class Image(object):
         elif isinstance(item, int):
             return Image('{0} + RGB({1})]'.format(self.content, item))
         else:
-            raise NotImplemented
+            raise NotImplementedError()
 
     def __rmul__(self, n):
         return Image('({1} * {0})'.format(self.content, float(n)))
