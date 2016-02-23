@@ -85,7 +85,6 @@ def gen_matches(same_as, history, n):
     cur_start = None
     cur_len = None
     cur_end = None
-    matches = []
     for i in xrange(n):
         if cur_start is None:
             tmp = same_as.get(i)
