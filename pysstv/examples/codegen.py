@@ -137,7 +137,10 @@ def test():
             print ' - speedup:', python_elapsed.total_seconds() / native_elapsed.total_seconds()
         print 'OK'
     finally:
-        remove(exe)
+        try:
+            remove(exe)
+        except OSError:
+            pass
 
 
 if __name__ == '__main__':
