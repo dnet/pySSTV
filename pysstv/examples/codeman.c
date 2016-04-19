@@ -1,21 +1,13 @@
-#include <stdint.h>
 #include <stdio.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#include "stb_image.h"
 #include "codegen.c"
 
 int main() {
-	uint32_t offset, size;
-	FILE *f = fopen("320x256rgb.bmp", "r");
-	fseek(f, 0x02, SEEK_SET);
-	fread(&size, 4, 1, f);
-	fseek(f, 0x0A, SEEK_SET);
-	fread(&offset, 4, 1, f);
-	fseek(f, offset, SEEK_SET);
-
-	unsigned char img[size];
-
-	fread(img, size - offset, 1, f);
-	fclose(f);
+	int x, y, n;
+	unsigned char *img = stbi_load("320x256rgb.png", &x, &y, &n, 0);
 
 	float freqs[FREQ_COUNT], msecs[FREQ_COUNT];
 

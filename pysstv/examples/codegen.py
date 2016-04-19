@@ -52,7 +52,7 @@ def main(sstv_class=None):
     n = 0
     yield '#define ROW(x) x'
     yield '#define COL(x) x'
-    yield '#define RGB(x) (2 - (x))'
+    yield '#define RGB(x) x'
     yield 'void convert(unsigned char *img, float *freqs, float *msecs) {\nint frq = 0;'
     history = []
     lut = {}
@@ -71,8 +71,8 @@ def main(sstv_class=None):
     m_start, m_len = gen_matches(same_as, history, n)
     for i in xrange(same_as[m_start]):
         yield history[i][0]
-    yield 'for (int row = {0}; row >= 0; row -= {1}) {{'.format(
-            (sstv.HEIGHT - 1) * sstv.WIDTH, sstv.WIDTH)
+    yield 'for (int row = 0; row < {0}; row += {1}) {{'.format(
+            sstv.HEIGHT * sstv.WIDTH, sstv.WIDTH)
     for i in xrange(same_as[m_start], same_as[m_start] + m_len - 1):
         yield ' ' + history[i][1]
     yield '}'
@@ -114,10 +114,13 @@ def test():
     from datetime import datetime
     import struct
     exe = './codegen-test-executable'
+    if not path.exists('stb_image.h'):
+        from urllib import urlretrieve
+        urlretrieve('https://raw.githubusercontent.com/nothings/stb/master/stb_image.h', 'stb_image.h')
     try:
         for sstv_class in supported:
             print 'Testing', sstv_class
-            gcc = Popen(['gcc', '-xc', '-o', exe, '-'], stdin=PIPE)
+            gcc = Popen(['gcc', '-xc', '-lm', '-o', exe, '-'], stdin=PIPE)
             start = datetime.now()
             with open(path.join(path.dirname(__file__), 'codeman.c')) as cm:
                 gcc.communicate(cm.read().replace('#include "codegen.c"', '\n'.join(main(sstv_class))))
