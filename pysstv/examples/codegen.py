@@ -37,10 +37,10 @@ class Image(object):
     def __str__(self):
         return self.content
 
-from pysstv.color import MartinM1
+from pysstv.color import MartinM1, MartinM2
 import re
 
-supported = [MartinM1]
+supported = [MartinM1, MartinM2]
 ROW_RE = re.compile(r'ROW\(\d+\)')
 
 def main(sstv_class=None):
