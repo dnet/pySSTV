@@ -53,7 +53,7 @@ def main(sstv_class=None):
     yield '#define ROW(x) x'
     yield '#define COL(x) x'
     yield '#define RGB(x) x'
-    yield 'void convert(unsigned char *img, float *freqs, float *msecs) {\nint frq = 0;'
+    yield 'void convert(unsigned char *img, float *freqs, float *msecs, const int width) {\nint frq = 0;'
     history = []
     lut = {}
     same_as = {}
@@ -71,8 +71,7 @@ def main(sstv_class=None):
     m_start, m_len = gen_matches(same_as, history, n)
     for i in xrange(same_as[m_start]):
         yield history[i][0]
-    yield 'for (int row = 0; row < {0}; row += {1}) {{'.format(
-            sstv.HEIGHT * sstv.WIDTH, sstv.WIDTH)
+    yield 'for (int row = 0; row < width * {0}; row += width) {{'.format(sstv.HEIGHT)
     for i in xrange(same_as[m_start], same_as[m_start] + m_len - 1):
         yield ' ' + history[i][1]
     yield '}'

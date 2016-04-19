@@ -11,7 +11,7 @@ int main() {
 
 	float freqs[FREQ_COUNT], msecs[FREQ_COUNT];
 
-	convert(img, freqs, msecs);
+	convert(img, freqs, msecs, x);
 
 	for (int i = 0; i < FREQ_COUNT; i++) {
 		fwrite(&(freqs[i]), 4, 1, stdout);
