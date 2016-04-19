@@ -122,7 +122,8 @@ def test():
             gcc = Popen(['gcc', '-xc', '-lm', '-o', exe, '-'], stdin=PIPE)
             start = datetime.now()
             with open(path.join(path.dirname(__file__), 'codeman.c')) as cm:
-                gcc.communicate(cm.read().replace('#include "codegen.c"', '\n'.join(main(sstv_class))))
+                c_src = cm.read().replace('#include "codegen.c"', '\n'.join(main(sstv_class)))
+                gcc.communicate(c_src)
             gen_elapsed = datetime.now() - start
             print ' - gengcc took', gen_elapsed
             start = datetime.now()
@@ -132,8 +133,21 @@ def test():
             img = Image.open("320x256rgb.png")
             sstv = sstv_class(img, 44100, 16)
             start = datetime.now()
-            for n, (freq, msec) in enumerate(sstv.gen_freq_bits()):
-                assert gen[n * 8:(n + 1) * 8] == struct.pack('ff', freq, msec)
+            try:
+                for n, (freq, msec) in enumerate(sstv.gen_freq_bits()):
+                    assert gen[n * 8:(n + 1) * 8] == struct.pack('ff', freq, msec)
+            except AssertionError:
+                mode_name = sstv_class.__name__
+                with file('/tmp/{0}-c.bin'.format(mode_name), 'wb') as f:
+                    f.write(gen)
+                with file('/tmp/{0}-py.bin'.format(mode_name), 'wb') as f:
+                    for n, (freq, msec) in enumerate(sstv.gen_freq_bits()):
+                        f.write(struct.pack('ff', freq, msec))
+                with file('/tmp/{0}.c'.format(mode_name), 'w') as f:
+                    f.write(c_src)
+                print (" ! Outputs are different, they've been saved to "
+                    "/tmp/{0}-{{c,py}}.bin, along with the C source code "
+                    "in /tmp/{0}.c").format(mode_name)
             python_elapsed = datetime.now() - start
             print ' - python took', python_elapsed
             print ' - speedup:', python_elapsed.total_seconds() / native_elapsed.total_seconds()
