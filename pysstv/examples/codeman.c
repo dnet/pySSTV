@@ -5,9 +5,9 @@
 #include "stb_image.h"
 #include "codegen.c"
 
-int main() {
+int main(int argc, char **argv) {
 	int x, y, n;
-	unsigned char *img = stbi_load("320x256rgb.png", &x, &y, &n, 0);
+	unsigned char *img = stbi_load(argv[1], &x, &y, &n, 0);
 
 	float freqs[FREQ_COUNT], msecs[FREQ_COUNT];
 

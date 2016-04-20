@@ -113,6 +113,7 @@ def test():
     from datetime import datetime
     import struct
     exe = './codegen-test-executable'
+    img_file = '320x256rgb.png'
     if not path.exists('stb_image.h'):
         from urllib import urlretrieve
         urlretrieve('https://raw.githubusercontent.com/nothings/stb/master/stb_image.h', 'stb_image.h')
@@ -127,10 +128,10 @@ def test():
             gen_elapsed = datetime.now() - start
             print ' - gengcc took', gen_elapsed
             start = datetime.now()
-            gen = check_output([exe])
+            gen = check_output([exe, img_file])
             native_elapsed = datetime.now() - start
             print ' - native took', native_elapsed
-            img = Image.open("320x256rgb.png")
+            img = Image.open(img_file)
             sstv = sstv_class(img, 44100, 16)
             start = datetime.now()
             try:
