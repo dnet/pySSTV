@@ -106,14 +106,13 @@ def gen_matches(same_as, history, n):
                     cur_start = i
                     cur_end = tmp
 
-def test():
+def test(img_file):
     from subprocess import Popen, PIPE, check_output
     from os import remove, path
     from PIL import Image
     from datetime import datetime
     import struct
     exe = './codegen-test-executable'
-    img_file = '320x256rgb.png'
     if not path.exists('stb_image.h'):
         from urllib import urlretrieve
         urlretrieve('https://raw.githubusercontent.com/nothings/stb/master/stb_image.h', 'stb_image.h')
@@ -162,7 +161,7 @@ def test():
 
 if __name__ == '__main__':
     from sys import argv
-    if len(argv) > 1 and argv[1] == 'test':
-        test()
+    if len(argv) > 2 and argv[1] == 'test':
+        test(argv[2])
     else:
         print '\n'.join(main())
