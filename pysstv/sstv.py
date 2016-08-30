@@ -7,6 +7,7 @@ from contextlib import closing
 from itertools import cycle, chain
 from array import array
 import wave
+import sys
 try:
     from itertools import imap, izip
 except ImportError:

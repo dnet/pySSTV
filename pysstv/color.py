@@ -4,6 +4,7 @@ from __future__ import division
 from pysstv.sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
 from pysstv.grayscale import GrayscaleSSTV
 from itertools import chain
+import sys
 if (sys.version_info > (3, 0)):
     xrange = range
 
