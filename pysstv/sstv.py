@@ -4,9 +4,16 @@ from __future__ import division, with_statement
 from math import sin, pi
 from random import random
 from contextlib import closing
-from itertools import imap, izip, cycle, chain
+from itertools import cycle, chain
 from array import array
 import wave
+try:
+    from itertools import imap, izip
+except ImportError:
+    imap = map
+    izip = zip
+if (sys.version_info > (3, 0)):
+    xrange = range
 
 FREQ_VIS_BIT1 = 1100
 FREQ_SYNC = 1200
