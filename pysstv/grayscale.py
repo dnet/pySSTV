@@ -2,6 +2,8 @@
 
 from __future__ import division
 from pysstv.sstv import SSTV, byte_to_freq
+if (sys.version_info > (3, 0)):
+    xrange = range
 
 
 class GrayscaleSSTV(SSTV):
