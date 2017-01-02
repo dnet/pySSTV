@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
+from builtins import range  # python 2/3 compatibility
 from pysstv.sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
 from pysstv.grayscale import GrayscaleSSTV
 from itertools import chain
@@ -18,7 +19,7 @@ class ColorSSTV(GrayscaleSSTV):
         for index in self.COLOR_SEQ:
             for item in self.before_channel(index):
                 yield item
-            for col in xrange(self.WIDTH):
+            for col in range(self.WIDTH):
                 pixel = image[col, line]
                 freq_pixel = byte_to_freq(pixel[index])
                 yield freq_pixel, msec_pixel
@@ -92,7 +93,7 @@ class Robot36(ColorSSTV):
         self.yuv = self.image.convert('YCbCr').load()
 
     def encode_line(self, line):
-        pixels = [self.yuv[col, line] for col in xrange(self.WIDTH)]
+        pixels = [self.yuv[col, line] for col in range(self.WIDTH)]
         channel = (line % 2) + 1
         y_pixel_time = self.Y_SCAN / self.WIDTH
         uv_pixel_time = self.C_SCAN / self.WIDTH
@@ -102,19 +103,19 @@ class Robot36(ColorSSTV):
                 [(self.INTER_CH_FREQS[channel], self.INTER_CH_GAP),
                     (FREQ_VIS_START, self.PORCH)],
                 ((byte_to_freq(p[channel]), uv_pixel_time) for p in pixels))
-		
+
 
 class PasokonP3(ColorSSTV):
     """
-      [ VIS code or horizontal sync here ]  
-      Back porch - 5 time units of black (1500 Hz).    
-      Red component - 640 pixels of 1 time unit each.    
-      Gap - 5 time units of black.   
-      Green component - 640 pixels of 1 time unit each.  
-      Gap - 5 time units of black.    
-      Blue component - 640 pixels of 1 time unit each.   
-      Front porch - 5 time units of black.   
-      Horizontal Sync - 25 time units of 1200 Hz.
+    [ VIS code or horizontal sync here ]
+    Back porch - 5 time units of black (1500 Hz).
+    Red component - 640 pixels of 1 time unit each.
+    Gap - 5 time units of black.
+    Green component - 640 pixels of 1 time unit each.
+    Gap - 5 time units of black.
+    Blue component - 640 pixels of 1 time unit each.
+    Front porch - 5 time units of black.
+    Horizontal Sync - 25 time units of 1200 Hz.
     """
     TIMEUNIT = 1000/4800. # ms
     COLOR_SEQ = (RED, GREEN, BLUE)
