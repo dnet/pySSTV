@@ -12,8 +12,13 @@ try:
     import itertools.izip as zip  # python 2
 except ImportError:
     pass  # python 3
-from builtins import range  # python 2/3 compatibility
 from itertools import cycle, chain
+try:  # python 2/3 compatibility
+    xrange  # will fail in python 3
+except NameError:
+    pass
+else:
+    range = xrange
 from array import array
 import wave
 
