@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 
 from __future__ import division
+
+try:  # python 2/3 compatibility
+    xrange  # will fail in python 3
+except NameError:
+    pass
+else:
+    range = xrange
 from pysstv.sstv import SSTV, byte_to_freq
 
 
@@ -9,7 +16,7 @@ class GrayscaleSSTV(SSTV):
         self.pixels = self.image.convert('LA').load()
 
     def gen_image_tuples(self):
-        for line in xrange(self.HEIGHT):
+        for line in range(self.HEIGHT):
             for item in self.horizontal_sync():
                 yield item
             for item in self.encode_line(line):
@@ -18,7 +25,7 @@ class GrayscaleSSTV(SSTV):
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
         image = self.pixels
-        for col in xrange(self.WIDTH):
+        for col in range(self.WIDTH):
             pixel = image[col, line]
             freq_pixel = byte_to_freq(pixel[0])
             yield freq_pixel, msec_pixel

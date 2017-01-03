@@ -4,7 +4,21 @@ from __future__ import division, with_statement
 from math import sin, pi
 from random import random
 from contextlib import closing
-from itertools import imap, izip, cycle, chain
+try:
+    import itertools.imap as map  # python 2
+except ImportError:
+    pass  # python 3
+try:
+    import itertools.izip as zip  # python 2
+except ImportError:
+    pass  # python 3
+from itertools import cycle, chain
+try:  # python 2/3 compatibility
+    xrange  # will fail in python 3
+except NameError:
+    pass
+else:
+    range = xrange
 from array import array
 import wave
 
@@ -46,7 +60,7 @@ class SSTV(object):
         data = array(fmt, self.gen_samples())
         if self.nchannels != 1:
             data = array(fmt, chain.from_iterable(
-                izip(*([data] * self.nchannels))))
+                zip(*([data] * self.nchannels))))
         with closing(wave.open(filename, 'wb')) as wav:
             wav.setnchannels(self.nchannels)
             wav.setsampwidth(self.bits // 8)
@@ -64,8 +78,8 @@ class SSTV(object):
         amp = max_value // 2
         lowest = -amp
         highest = amp - 1
-        alias_cycle = cycle((alias * (random() - 0.5) for _ in xrange(1024)))
-        for value, alias_item in izip(self.gen_values(), alias_cycle):
+        alias_cycle = cycle((alias * (random() - 0.5) for _ in range(1024)))
+        for value, alias_item in zip(self.gen_values(), alias_cycle):
             sample = int(value * amp + alias_item)
             yield (lowest if sample <= lowest else
                 sample if sample <= highest else highest)
@@ -85,7 +99,7 @@ class SSTV(object):
             samples += spms * msec
             tx = int(samples)
             freq_factor = freq * factor
-            for sample in xrange(tx):
+            for sample in range(tx):
                 yield sin(sample * freq_factor + offset)
             offset += (sample + 1) * freq_factor
             samples -= tx
@@ -104,7 +118,7 @@ class SSTV(object):
         yield FREQ_SYNC, MSEC_VIS_BIT  # start bit
         vis = self.VIS_CODE
         num_ones = 0
-        for _ in xrange(7):
+        for _ in range(7):
             bit = vis & 1
             vis >>= 1
             num_ones += bit
@@ -115,8 +129,8 @@ class SSTV(object):
         yield FREQ_SYNC, MSEC_VIS_BIT  # stop bit
         for freq_tuple in self.gen_image_tuples():
             yield freq_tuple
-        for fskid_byte in imap(ord, self.fskid_payload):
-            for _ in xrange(6):
+        for fskid_byte in map(ord, self.fskid_payload):
+            for _ in range(6):
                 bit = fskid_byte & 1
                 fskid_byte >>= 1
                 bit_freq = FREQ_FSKID_BIT1 if bit == 1 else FREQ_FSKID_BIT0
