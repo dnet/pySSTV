@@ -4,7 +4,7 @@ from six.moves import zip
 import pickle
 import mock
 from mock import MagicMock
-from StringIO import StringIO
+from six import StringIO
 import hashlib
 
 from pysstv import sstv
