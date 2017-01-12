@@ -5,6 +5,7 @@ import pickle
 import mock
 from mock import MagicMock
 from six import StringIO
+from six import PY2
 import hashlib
 
 from pysstv import sstv
@@ -70,7 +71,8 @@ class TestSSTV(unittest.TestCase):
         sio = StringIO()
         sio.close = MagicMock()  # ignore close() so we can .getvalue()
         mock_open = MagicMock(return_value=sio)
-        with mock.patch('__builtin__.open', mock_open):
+        ns = '__builtin__' if PY2 else 'io'
+        with mock.patch('{0}.open'.format(ns), mock_open):
             self.s.write_wav('unittest.wav')
         expected = 'dd7eed880ab3360fb79ce09c469deee2'
         data = sio.getvalue()
