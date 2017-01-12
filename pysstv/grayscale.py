@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import division
-
-try:  # python 2/3 compatibility
-    xrange  # will fail in python 3
-except NameError:
-    pass
-else:
-    range = xrange
+from six.moves import range
 from pysstv.sstv import SSTV, byte_to_freq
 
 

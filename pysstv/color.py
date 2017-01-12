@@ -1,18 +1,13 @@
 #!/usr/bin/env python
-
 from __future__ import division
-try:  # python 2/3 compatibility
-    xrange  # will fail in python 3
-except NameError:
-    pass
-else:
-    range = xrange
+from six.moves import range
 from pysstv.sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
 from pysstv.grayscale import GrayscaleSSTV
 from itertools import chain
 
 
 RED, GREEN, BLUE = range(3)
+
 
 class ColorSSTV(GrayscaleSSTV):
     def on_init(self):

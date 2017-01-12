@@ -1,24 +1,13 @@
 #!/usr/bin/env python
 
 from __future__ import division, with_statement
+from six.moves import range
+from six.moves import map
+from six.moves import zip
 from math import sin, pi
 from random import random
 from contextlib import closing
-try:
-    import itertools.imap as map  # python 2
-except ImportError:
-    pass  # python 3
-try:
-    import itertools.izip as zip  # python 2
-except ImportError:
-    pass  # python 3
 from itertools import cycle, chain
-try:  # python 2/3 compatibility
-    xrange  # will fail in python 3
-except NameError:
-    pass
-else:
-    range = xrange
 from array import array
 import wave
 
