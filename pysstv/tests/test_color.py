@@ -17,12 +17,14 @@ class TestMartinM1(unittest.TestCase):
         self.lena = color.MartinM1(lena, 48000, 16)
 
     def test_gen_freq_bits(self):
-        expected = pickle.load(open(get_asset_filename("MartinM1_freq_bits.p")))
+        with open(get_asset_filename("MartinM1_freq_bits.p"), 'rb') as f:
+            expected = pickle.load(f)
         actual = list(islice(self.s.gen_freq_bits(), 0, 1000))
         self.assertEqual(expected, actual)
 
     def test_gen_freq_bits_lena(self):
-        expected = pickle.load(open(get_asset_filename("MartinM1_freq_bits_lena.p")))
+        with open(get_asset_filename("MartinM1_freq_bits_lena.p"), 'rb') as f:
+            expected = pickle.load(f)
         actual = list(islice(self.lena.gen_freq_bits(), 0, 1000))
         self.assertEqual(expected, actual)
 
@@ -40,7 +42,7 @@ class TestMartinM1(unittest.TestCase):
         self.maxDiff = None
         line_numbers = [1, 10, 100]
         for line in line_numbers:
-            file = open(get_asset_filename("MartinM1_encode_line_lena%d.p" % line))
-            expected = pickle.load(file)
+            with open(get_asset_filename("MartinM1_encode_line_lena%d.p" % line), 'rb') as f:
+                expected = pickle.load(f)
             actual = list(self.lena.encode_line(line))
             self.assertEqual(expected, actual)
