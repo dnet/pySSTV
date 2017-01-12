@@ -71,5 +71,5 @@ Useful links
 Dependencies
 ------------
 
- - Python 2.7 (tested on 2.7.5)
+ - Python 2.7 (tested on 2.7.5; 2.6 might work, but test suite lacks support)
  - Python Imaging Library (Debian/Ubuntu package: `python-imaging`)
