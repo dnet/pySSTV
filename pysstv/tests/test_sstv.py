@@ -9,7 +9,7 @@ import hashlib
 
 from pysstv import sstv
 from pysstv.sstv import SSTV
-from common import get_asset_filename
+from pysstv.tests.common import get_asset_filename
 
 
 class TestSSTV(unittest.TestCase):
