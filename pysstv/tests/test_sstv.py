@@ -4,7 +4,7 @@ from six.moves import zip
 import pickle
 import mock
 from mock import MagicMock
-from six import StringIO
+from six import BytesIO
 from six import PY2
 import hashlib
 
@@ -68,14 +68,14 @@ class TestSSTV(unittest.TestCase):
 
     def test_write_wav(self):
         self.maxDiff = None
-        sio = StringIO()
-        sio.close = MagicMock()  # ignore close() so we can .getvalue()
-        mock_open = MagicMock(return_value=sio)
+        bio = BytesIO()
+        bio.close = MagicMock()  # ignore close() so we can .getvalue()
+        mock_open = MagicMock(return_value=bio)
         ns = '__builtin__' if PY2 else 'io'
         with mock.patch('{0}.open'.format(ns), mock_open):
             self.s.write_wav('unittest.wav')
         expected = 'dd7eed880ab3360fb79ce09c469deee2'
-        data = sio.getvalue()
+        data = bio.getvalue()
         actual = hashlib.md5(data).hexdigest()
         self.assertEqual(expected, actual)
 
