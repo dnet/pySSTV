@@ -22,7 +22,7 @@ class TestSSTV(unittest.TestCase):
     def test_horizontal_sync(self):
         horizontal_sync = self.s.horizontal_sync()
         expected = (1200, self.s.SYNC)
-        actual = horizontal_sync.next()
+        actual = next(iter(horizontal_sync))
         self.assertEqual(expected, actual)
 
     def test_gen_freq_bits(self):
