@@ -71,7 +71,7 @@ class TestSSTV(unittest.TestCase):
         bio = BytesIO()
         bio.close = MagicMock()  # ignore close() so we can .getvalue()
         mock_open = MagicMock(return_value=bio)
-        ns = '__builtin__' if PY2 else 'io'
+        ns = '__builtin__' if PY2 else 'builtins'
         with mock.patch('{0}.open'.format(ns), mock_open):
             self.s.write_wav('unittest.wav')
         expected = 'dd7eed880ab3360fb79ce09c469deee2'
