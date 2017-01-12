@@ -46,7 +46,8 @@ class TestSSTV(unittest.TestCase):
     # FIXME: Instead of using a test fixture, 'expected' should be synthesized?
     def test_gen_values(self):
         gen_values = self.s.gen_values()
-        expected = pickle.load(open(get_asset_filename("SSTV_gen_values.p")))
+        with open(get_asset_filename("SSTV_gen_values.p"), 'rb') as f:
+            expected = pickle.load(f)
         for e, g in zip(expected, gen_values):
             self.assertAlmostEqual(e, g, delta=0.000000001)
 
@@ -58,7 +59,8 @@ class TestSSTV(unittest.TestCase):
         # and having different results.
         # https://en.wikipedia.org/wiki/Quantization_%28signal_processing%29
         sstv.random = MagicMock(return_value=0.4)  # xkcd:221
-        expected = pickle.load(open(get_asset_filename("SSTV_gen_samples.p")))
+        with open(get_asset_filename("SSTV_gen_samples.p"), 'rb') as f:
+            expected = pickle.load(f)
         actual = list(islice(gen_values, 0, 1000))
         for e, a in zip(expected, actual):
             self.assertAlmostEqual(e, a, delta=1)
