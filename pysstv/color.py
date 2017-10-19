@@ -90,7 +90,7 @@ class Robot36(ColorSSTV):
     INTER_CH_FREQS = [None, FREQ_BLACK, FREQ_WHITE]
 
     def on_init(self):
-        self.yuv = self.image.convert('YCbCr').load()
+        self.yuv = self.image.convert('YCrCb').load()
 
     def encode_line(self, line):
         pixels = [self.yuv[col, line] for col in range(self.WIDTH)]
