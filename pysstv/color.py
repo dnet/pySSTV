@@ -94,7 +94,7 @@ class Robot36(ColorSSTV):
 
     def encode_line(self, line):
         pixels = [self.yuv[col, line] for col in range(self.WIDTH)]
-        channel = (line % 2) + 1
+        channel = 2 - (line % 2)
         y_pixel_time = self.Y_SCAN / self.WIDTH
         uv_pixel_time = self.C_SCAN / self.WIDTH
         return chain(
