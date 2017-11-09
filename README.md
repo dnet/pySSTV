@@ -16,22 +16,27 @@ Command line usage
 
     $ python -m pysstv -h
     usage: __main__.py [-h]
-                  [--mode {MartinM2,MartinM1,Robot24BW,ScottieS2,ScottieS1,Robot8BW,PasokonP3,PasokonP5,PasokonP7}]
-                  [--rate RATE] [--bits BITS]
-                  image.png output.wav
+                   [--mode {MartinM2,MartinM1,Robot24BW,PasokonP3,ScottieS2,Scot                                                                          tieS1,PasokonP5,Robot36,Robot8BW,PasokonP7}]
+                   [--rate RATE] [--bits BITS] [--vox] [--fskid FSKID]
+                   [--chan CHAN]
+                   image.png output.wav
 
     Converts an image to an SSTV modulated WAV file.
 
     positional arguments:
       image.png             input image file name
-      output.wav            output WAV file name
+     output.wav            output WAV file name
 
     optional arguments:
       -h, --help            show this help message and exit
-      --mode {MartinM2,MartinM1,Robot24BW,ScottieS2,ScottieS1,Robot8BW,PasokonP3,PasokonP5,PasokonP7}
-                            image mode (default: Martin M1)
+     --mode {MartinM2,MartinM1,Robot24BW,PasokonP3,ScottieS2,ScottieS1,PasokonP5,Ro                                                                          bot36,Robot8BW,PasokonP7}
+                        image mode (default: Martin M1)
       --rate RATE           sampling rate (default: 48000)
-      --bits BITS           bits per sample (default: 16)
+     --bits BITS           bits per sample (default: 16)
+     --vox                 add VOX tones at the beginning
+     --fskid FSKID         add FSKID at the end
+     --chan CHAN           number of channels (default: mono)
+
 
 Python interface
 ----------------
