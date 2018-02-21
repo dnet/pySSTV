@@ -11,7 +11,7 @@ setup(
     url='https://github.com/dnet/pySSTV',
     packages=['pysstv', 'pysstv.tests', 'pysstv.examples'],
     keywords='HAM SSTV slow-scan television Scottie Martin Robot Pasokon',
-    install_requires = ['Pillow',],
+    install_requires = ['Pillow', 'six'],
     license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
