@@ -47,7 +47,11 @@ def main():
 
 
 def build_module_map():
-    module_map = {}
+    try:
+        from collections import OrderedDict
+        module_map = OrderedDict()
+    except ImportError:
+        module_map = {}
     for module in SSTV_MODULES:
         for mode in module.MODES:
             module_map[mode.__name__] = mode
