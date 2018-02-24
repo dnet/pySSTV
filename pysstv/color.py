@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from __future__ import division
-from six.moves import range
+from six.moves import range, zip
 from pysstv.sstv import byte_to_freq, FREQ_BLACK, FREQ_WHITE, FREQ_VIS_START
 from pysstv.grayscale import GrayscaleSSTV
 from itertools import chain
@@ -149,4 +149,52 @@ class PasokonP7(PasokonP3):
     INTER_CH_GAP = 5 * TIMEUNIT
 
 
-MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, Robot36, PasokonP3, PasokonP5, PasokonP7)
+class PD90(ColorSSTV):
+    VIS_CODE = 0x63
+    WIDTH = 320
+    HEIGHT = 256
+    SYNC = 20
+    PORCH = 2.08
+    PIXEL = 0.532
+
+    def gen_image_tuples(self):
+        yuv = self.image.convert('YCbCr').load()
+        for line in range(0, self.HEIGHT, 2):
+            for item in self.horizontal_sync():
+                yield item
+            yield FREQ_BLACK, self.PORCH
+            pixels0 = [yuv[col, line] for col in range(self.WIDTH)]
+            pixels1 = [yuv[col, line + 1] for col in range(self.WIDTH)]
+            for p in pixels0:
+                yield byte_to_freq(p[0]), self.PIXEL
+            for p0, p1 in zip(pixels0, pixels1):
+                yield byte_to_freq((p0[2] + p1[2]) / 2), self.PIXEL
+            for p0, p1 in zip(pixels0, pixels1):
+                yield byte_to_freq((p0[1] + p1[1]) / 2), self.PIXEL
+            for p in pixels1:
+                yield byte_to_freq(p[0]), self.PIXEL
+
+
+class PD120(PD90):
+    VIS_CODE = 0x5f
+    WIDTH = 640
+    HEIGHT = 496
+    PIXEL = 0.19
+
+class PD160(PD90):
+    VIS_CODE = 0x62
+    WIDTH = 512
+    HEIGHT = 400
+    PIXEL = 0.382
+
+class PD180(PD120):
+    VIS_CODE = 0x60
+    PIXEL = 0.286
+
+class PD240(PD120):
+    VIS_CODE = 0x61
+    PIXEL = 0.382
+
+
+MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, Robot36,
+        PasokonP3, PasokonP5, PasokonP7, PD90, PD120, PD160, PD180, PD240)
