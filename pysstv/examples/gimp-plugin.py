@@ -152,9 +152,6 @@ def contrast(value):
     else:
         return 255 - value
 
-def set_ptt_pin(port, pin, state):
-    getattr(port, 'set' + pin)(state)
-
 def transmit_current_image(image, drawable, mode, vox, fskid, ptt_port, ptt_pin, ptt_state):
     sstv = MODULE_MAP[mode]
     if ptt_port is not None:
