@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 
 # copy to ~/.gimp-2.8/plug-ins/
-# dependencies: GIMP 2.8, python-imaging-tk
+# dependencies: GIMP 2.8, python-imaging-tk, python-pyaudio
 
 from gimpfu import register, main, pdb, PF_BOOL, PF_STRING, PF_RADIO, CLIP_TO_IMAGE
 from PIL import Image, ImageTk
