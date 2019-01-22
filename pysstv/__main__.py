@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+from __future__ import print_function, division
 from PIL import Image
 from argparse import ArgumentParser
 from sys import stderr
@@ -30,10 +30,40 @@ def main():
                         help='add FSKID at the end')
     parser.add_argument('--chan', dest='chan', type=int,
                         help='number of channels (default: mono)')
+    parser.add_argument('--resize', dest='resize', action='store_true',
+                        help='resize the image to the correct size')
+    parser.add_argument('--keep-aspect-ratio', dest='keep_aspect_ratio', action='store_true',
+                        help='keep the original aspect ratio when resizing (and cut off excess pixels)')
+    parser.add_argument('--resample', dest='resample', default='lanczos',
+                        choices=('nearest', 'bicubic', 'lanczos'),
+                        help='which resampling filter to use for resizing (see Pillow documentation)')
     args = parser.parse_args()
     image = Image.open(args.img_file)
     mode = module_map[args.mode]
-    if not all(i >= m for i, m in zip(image.size, (mode.WIDTH, mode.HEIGHT))):
+    if args.resize and any(i != m for i, m in zip(image.size, (mode.WIDTH, mode.HEIGHT))):
+        resample = getattr(Image, args.resample.upper())
+        if args.keep_aspect_ratio:
+            orig_ratio = image.width / image.height
+            mode_ratio = mode.WIDTH / mode.HEIGHT
+            crop = orig_ratio != mode_ratio
+        else:
+            crop = False
+        if crop:
+            if orig_ratio < mode_ratio:
+                w = mode.WIDTH
+                h = int(w / orig_ratio)
+            else:
+                h = mode.HEIGHT
+                w = int(orig_ratio * h)
+        else:
+            w = mode.WIDTH
+            h = mode.HEIGHT
+        image = image.resize((w, h), resample)
+        if crop:
+            x = (image.width - mode.WIDTH) / 2
+            y = (image.height - mode.HEIGHT) / 2
+            image = image.crop((x, y, mode.WIDTH + x, mode.HEIGHT + y))
+    elif not all(i >= m for i, m in zip(image.size, (mode.WIDTH, mode.HEIGHT))):
         print(('Image must be at least {m.WIDTH} x {m.HEIGHT} pixels '
                'for mode {m.__name__}').format(m=mode), file=stderr)
         raise SystemExit(1)
