@@ -11,7 +11,7 @@ RED, GREEN, BLUE = range(3)
 
 class ColorSSTV(GrayscaleSSTV):
     def on_init(self):
-        self.pixels = self.image.load()
+        self.pixels = self.image.convert('RGB').load()
 
     def encode_line(self, line):
         msec_pixel = self.SCAN / self.WIDTH
