@@ -10,6 +10,11 @@ setup(
     author_email='vsza@vsza.hu',
     url='https://github.com/dnet/pySSTV',
     packages=['pysstv', 'pysstv.tests', 'pysstv.examples'],
+    entry_points={
+        'console_scripts': [
+            'pysstv = pysstv.__main__:main',
+        ],
+    },
     keywords='HAM SSTV slow-scan television Scottie Martin Robot Pasokon',
     install_requires = ['Pillow', 'six'],
     license='MIT',
