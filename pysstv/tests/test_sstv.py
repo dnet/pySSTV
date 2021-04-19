@@ -1,10 +1,8 @@
 import unittest
+from io import BytesIO
 from itertools import islice
-from six.moves import zip
 import mock
 from mock import MagicMock
-from six import BytesIO
-from six import PY2
 import hashlib
 
 from pysstv import sstv
@@ -68,8 +66,7 @@ class TestSSTV(unittest.TestCase):
         bio = BytesIO()
         bio.close = MagicMock()  # ignore close() so we can .getvalue()
         mock_open = MagicMock(return_value=bio)
-        ns = '__builtin__' if PY2 else 'builtins'
-        with mock.patch('{0}.open'.format(ns), mock_open):
+        with mock.patch('builtins.open', mock_open):
             self.s.write_wav('unittest.wav')
         expected = 'dd7eed880ab3360fb79ce09c469deee2'
         data = bio.getvalue()

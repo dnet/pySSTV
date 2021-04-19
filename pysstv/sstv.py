@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
 from __future__ import division, with_statement
-from six.moves import range
-from six.moves import map
-from six.moves import zip
-from six import PY3
 from math import sin, pi
 from random import random
 from contextlib import closing
@@ -55,7 +51,7 @@ class SSTV(object):
             wav.setnchannels(self.nchannels)
             wav.setsampwidth(self.bits // 8)
             wav.setframerate(self.samples_per_sec)
-            wav.writeframes(data if PY3 else data.tostring())
+            wav.writeframes(data)
 
     def gen_samples(self):
         """generates discrete samples from gen_values()

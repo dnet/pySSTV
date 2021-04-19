@@ -16,7 +16,7 @@ setup(
         ],
     },
     keywords='HAM SSTV slow-scan television Scottie Martin Robot Pasokon',
-    install_requires = ['Pillow', 'six'],
+    install_requires = ['Pillow'],
     license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
