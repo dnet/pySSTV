@@ -193,7 +193,13 @@ class PD180(PD120):
 class PD240(PD120):
     VIS_CODE = 0x61
     PIXEL = 0.382
+    
+class PD290(PD240):
+    VIS_CODE = 0x5e
+    WIDTH = 800
+    HEIGHT = 616
+    PIXEL = 0.286
 
 
 MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, Robot36,
-        PasokonP3, PasokonP5, PasokonP7, PD90, PD120, PD160, PD180, PD240)
+        PasokonP3, PasokonP5, PasokonP7, PD90, PD120, PD160, PD180, PD240, PD290)
