@@ -193,7 +193,7 @@ class PD180(PD120):
 class PD240(PD120):
     VIS_CODE = 0x61
     PIXEL = 0.382
-    
+
 class PD290(PD240):
     VIS_CODE = 0x5e
     WIDTH = 800
