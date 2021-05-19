@@ -16,7 +16,7 @@ Command line usage
 
     $ python -m pysstv -h
     usage: __main__.py [-h]
-                  [--mode {MartinM1,MartinM2,ScottieS1,ScottieS2,Robot36,PasokonP3,PasokonP5,PasokonP7,PD90,PD120,PD160,PD180,PD240,Robot8BW,Robot24BW}]
+                  [--mode {MartinM1,MartinM2,ScottieS1,ScottieS2,Robot36,PasokonP3,PasokonP5,PasokonP7,PD90,PD120,PD160,PD180,PD240,PD290,Robot8BW,Robot24BW}]
                   [--rate RATE] [--bits BITS] [--vox] [--fskid FSKID]
                   [--chan CHAN]
                   image.png output.wav
