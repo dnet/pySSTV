@@ -71,6 +71,7 @@ def main():
             else:
                 newbg.paste(image, (int((mode.WIDTH/2)-(w/2)), 0))
             image = newbg.copy()
+            crop = False
         if crop:
             x = (image.width - mode.WIDTH) / 2
             y = (image.height - mode.HEIGHT) / 2
