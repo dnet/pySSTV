@@ -34,7 +34,7 @@ def main():
                         help='resize the image to the correct size')
     parser.add_argument('--keep-aspect-ratio', dest='keep_aspect_ratio', action='store_true',
                         help='keep the original aspect ratio when resizing (and cut off excess pixels)')
-    parser.add_argument('--keep-aspect', dest='keep-aspect', action='store_true',
+    parser.add_argument('--keep-aspect', dest='keep_aspect', action='store_true',
                         help='keep the original aspect ratio when resizing (not cut off excess pixels)')
     parser.add_argument('--resample', dest='resample', default='lanczos',
                         choices=('nearest', 'bicubic', 'lanczos'),
