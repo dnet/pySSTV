@@ -36,6 +36,13 @@ Command line usage
       --vox                 add VOX tones at the beginning
       --fskid FSKID         add FSKID at the end
       --chan CHAN           number of channels (default: mono)
+      --resize              resize the image to the correct size
+      --keep-aspect-ratio   keep the original aspect ratio when resizing 
+                                (and cut off excess pixels)
+      --keep-aspect         keep the original aspect ratio when resizing 
+                                (not cut off excess pixels)
+      --resample            which resampling filter to use for resizing
+                                (see Pillow documentation)
 
 Python interface
 ----------------
