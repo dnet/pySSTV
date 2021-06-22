@@ -34,6 +34,8 @@ def main():
                         help='resize the image to the correct size')
     parser.add_argument('--keep-aspect-ratio', dest='keep_aspect_ratio', action='store_true',
                         help='keep the original aspect ratio when resizing (and cut off excess pixels)')
+    parser.add_argument('--keep-aspect', dest='keep-aspect', action='store_true',
+                        help='keep the original aspect ratio when resizing (not cut off excess pixels)')
     parser.add_argument('--resample', dest='resample', default='lanczos',
                         choices=('nearest', 'bicubic', 'lanczos'),
                         help='which resampling filter to use for resizing (see Pillow documentation)')
@@ -42,14 +44,17 @@ def main():
     mode = module_map[args.mode]
     if args.resize and any(i != m for i, m in zip(image.size, (mode.WIDTH, mode.HEIGHT))):
         resample = getattr(Image, args.resample.upper())
-        if args.keep_aspect_ratio:
+        if args.keep_aspect_ratio or args.keep_aspect:
             orig_ratio = image.width / image.height
             mode_ratio = mode.WIDTH / mode.HEIGHT
             crop = orig_ratio != mode_ratio
         else:
             crop = False
         if crop:
-            if orig_ratio < mode_ratio:
+            t = orig_ratio < mode_ratio
+            if args.keep_aspect:
+                t = orig_ratio > mode_ratio
+            if t:
                 w = mode.WIDTH
                 h = int(w / orig_ratio)
             else:
@@ -59,6 +64,13 @@ def main():
             w = mode.WIDTH
             h = mode.HEIGHT
         image = image.resize((w, h), resample)
+        if args.keep_aspect:
+            newbg = Image.new('RGB', (mode.WIDTH, mode.HEIGHT))
+            if t:
+                newbg.paste(image, (0, (mode.HEIGHT/2)-(h/2)))
+            else:
+                newbg.paste(image, ((mode.WIDTH/2)-(w/2), 0))
+            image = newbg.copy()
         if crop:
             x = (image.width - mode.WIDTH) / 2
             y = (image.height - mode.HEIGHT) / 2
