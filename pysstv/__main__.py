@@ -67,9 +67,9 @@ def main():
         if args.keep_aspect:
             newbg = Image.new('RGB', (mode.WIDTH, mode.HEIGHT))
             if t:
-                newbg.paste(image, (0, (mode.HEIGHT/2)-(h/2)))
+                newbg.paste(image, (0, int((mode.HEIGHT/2)-(h/2))))
             else:
-                newbg.paste(image, ((mode.WIDTH/2)-(w/2), 0))
+                newbg.paste(image, (int((mode.WIDTH/2)-(w/2)), 0))
             image = newbg.copy()
         if crop:
             x = (image.width - mode.WIDTH) / 2
