@@ -138,12 +138,12 @@ def test(img_file):
                     assert gen[n * 8:(n + 1) * 8] == struct.pack('ff', freq, msec)
             except AssertionError:
                 mode_name = sstv_class.__name__
-                with file('/tmp/{0}-c.bin'.format(mode_name), 'wb') as f:
+                with open('/tmp/{0}-c.bin'.format(mode_name), 'wb') as f:
                     f.write(gen)
-                with file('/tmp/{0}-py.bin'.format(mode_name), 'wb') as f:
+                with open('/tmp/{0}-py.bin'.format(mode_name), 'wb') as f:
                     for n, (freq, msec) in enumerate(sstv.gen_freq_bits()):
                         f.write(struct.pack('ff', freq, msec))
-                with file('/tmp/{0}.c'.format(mode_name), 'w') as f:
+                with open('/tmp/{0}.c'.format(mode_name), 'w') as f:
                     f.write(c_src)
                 print((" ! Outputs are different, they've been saved to "
                     "/tmp/{0}-{{c,py}}.bin, along with the C source code "
