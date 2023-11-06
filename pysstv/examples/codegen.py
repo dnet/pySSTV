@@ -69,10 +69,10 @@ def main(sstv_class=None):
         n += 1
     del lut
     m_start, m_len = gen_matches(same_as, history, n)
-    for i in xrange(same_as[m_start]):
+    for i in range(same_as[m_start]):
         yield history[i][0]
     yield 'for (int row = 0; row < width * {0}; row += width) {{'.format(sstv.HEIGHT)
-    for i in xrange(same_as[m_start], same_as[m_start] + m_len - 1):
+    for i in range(same_as[m_start], same_as[m_start] + m_len - 1):
         yield ' ' + history[i][1]
     yield '}'
     yield '}}\n\n#define FREQ_COUNT {0}'.format(n)
@@ -83,7 +83,7 @@ def gen_matches(same_as, history, n):
     cur_start = None
     cur_len = None
     cur_end = None
-    for i in xrange(n):
+    for i in range(n):
         if cur_start is None:
             tmp = same_as.get(i)
             if tmp is not None:
@@ -114,22 +114,22 @@ def test(img_file):
     import struct
     exe = './codegen-test-executable'
     if not path.exists('stb_image.h'):
-        from urllib import urlretrieve
+        from urllib.request import urlretrieve
         urlretrieve('https://raw.githubusercontent.com/nothings/stb/master/stb_image.h', 'stb_image.h')
     try:
         for sstv_class in supported:
-            print 'Testing', sstv_class
+            print('Testing', sstv_class)
             gcc = Popen(['gcc', '-xc', '-lm', '-o', exe, '-'], stdin=PIPE)
             start = datetime.now()
             with open(path.join(path.dirname(__file__), 'codeman.c')) as cm:
                 c_src = cm.read().replace('#include "codegen.c"', '\n'.join(main(sstv_class)))
                 gcc.communicate(c_src)
             gen_elapsed = datetime.now() - start
-            print ' - gengcc took', gen_elapsed
+            print(' - gengcc took', gen_elapsed)
             start = datetime.now()
             gen = check_output([exe, img_file])
             native_elapsed = datetime.now() - start
-            print ' - native took', native_elapsed
+            print(' - native took', native_elapsed)
             img = Image.open(img_file)
             sstv = sstv_class(img, 44100, 16)
             start = datetime.now()
@@ -145,13 +145,13 @@ def test(img_file):
                         f.write(struct.pack('ff', freq, msec))
                 with file('/tmp/{0}.c'.format(mode_name), 'w') as f:
                     f.write(c_src)
-                print (" ! Outputs are different, they've been saved to "
+                print((" ! Outputs are different, they've been saved to "
                     "/tmp/{0}-{{c,py}}.bin, along with the C source code "
-                    "in /tmp/{0}.c").format(mode_name)
+                    "in /tmp/{0}.c").format(mode_name))
             python_elapsed = datetime.now() - start
-            print ' - python took', python_elapsed
-            print ' - speedup:', python_elapsed.total_seconds() / native_elapsed.total_seconds()
-        print 'OK'
+            print(' - python took', python_elapsed)
+            print(' - speedup:', python_elapsed.total_seconds() / native_elapsed.total_seconds())
+        print('OK')
     finally:
         try:
             remove(exe)
@@ -164,4 +164,4 @@ if __name__ == '__main__':
     if len(argv) > 2 and argv[1] == 'test':
         test(argv[2])
     else:
-        print '\n'.join(main())
+        print('\n'.join(main()))

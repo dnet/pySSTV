@@ -5,7 +5,7 @@ Demonstrates playing the generated samples directly using PyAudio
 Tested on PyAudio 0.2.7 http://people.csail.mit.edu/hubert/pyaudio/
 """
 
-from __future__ import division
+
 from pysstv.sstv import SSTV
 from time import sleep
 from itertools import islice

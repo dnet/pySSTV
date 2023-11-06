@@ -6,13 +6,13 @@
 
 from gimpfu import register, main, pdb, PF_BOOL, PF_STRING, PF_RADIO, CLIP_TO_IMAGE
 from PIL import Image, ImageTk
-from Tkinter import Tk, Canvas, Button, Checkbutton, IntVar, Frame, LEFT, NW
+from tkinter import Tk, Canvas, Button, Checkbutton, IntVar, Frame, LEFT, NW
 from pysstv import __main__ as pysstv_main
 from pysstv.examples.pyaudio_sstv import PyAudioSSTV
 from pysstv.sstv import SSTV
 from itertools import repeat
 from threading import Thread
-from Queue import Queue, Empty
+from queue import Queue, Empty
 from time import sleep
 import gimp, os
 
@@ -118,12 +118,12 @@ class ProgressCanvas(Canvas):
         self.height_ratio = 1
         width, height = image.size
         pixels = image.load()
-        RED, GREEN, BLUE = range(3)
+        RED, GREEN, BLUE = list(range(3))
         self.colors = ['#{0:02x}{1:02x}{2:02x}'.format(
-            contrast(sum(pixels[x, y][RED]   for x in xrange(width)) / width),
-            contrast(sum(pixels[x, y][GREEN] for x in xrange(width)) / width),
-            contrast(sum(pixels[x, y][BLUE]  for x in xrange(width)) / width))
-            for y in xrange(height)]
+            contrast(sum(pixels[x, y][RED]   for x in range(width)) / width),
+            contrast(sum(pixels[x, y][GREEN] for x in range(width)) / width),
+            contrast(sum(pixels[x, y][BLUE]  for x in range(width)) / width))
+            for y in range(height)]
         if height / float(width) > 1.5:
             width *= 2
         elif width < 200:
@@ -237,7 +237,7 @@ register(
         "*",
         [
             (PF_RADIO, "mode", "SSTV mode", "MartinM1",
-                tuple((n, n) for n in sorted(MODULE_MAP.iterkeys()))),
+                tuple((n, n) for n in sorted(MODULE_MAP.keys()))),
             (PF_BOOL, "vox", "Include VOX tones", True),
             (PF_STRING, "fskid", "FSK ID", ""),
             (PF_RADIO, "ptt_port", "PTT port", None,

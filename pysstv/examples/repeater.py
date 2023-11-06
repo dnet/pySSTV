@@ -8,9 +8,9 @@ simply copying/linking images to the directory or suing an SSTV
 receiver such as slowrx or QSSTV.
 """
 
-from __future__ import print_function
+
 from pyinotify import WatchManager, Notifier, ProcessEvent, IN_CREATE
-from pyaudio_sstv import PyAudioSSTV
+from .pyaudio_sstv import PyAudioSSTV
 from pysstv.color import MartinM1, MartinM2, ScottieS1, ScottieS2
 from pysstv.grayscale import Robot8BW, Robot24BW
 from PIL import Image
@@ -44,13 +44,13 @@ class EventHandler(ProcessEvent):
 
 def get_module_for_filename(filename):
     basename, _ = path.splitext(path.basename(filename))
-    for mode, module in MODE_MAP.iteritems():
+    for mode, module in MODE_MAP.items():
         if mode in basename:
             return module
 
 def get_module_for_image(image):
     size = image.size
-    for mode in MODE_MAP.itervalues():
+    for mode in MODE_MAP.values():
         if all(i >= m for i, m in zip(size, (mode.WIDTH, mode.HEIGHT))):
             return mode
 
