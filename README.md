@@ -1,8 +1,6 @@
 SSTV generator in pure Python
 =============================
 
-[![Build Status](https://travis-ci.org/dnet/pySSTV.svg?branch=master)](https://travis-ci.org/dnet/pySSTV)
-
 PySSTV generates SSTV modulated WAV files from any image that PIL can open
 (PNG, JPEG, GIF, and many others). These WAV files then can be played by any
 audio player connected to a shortwave radio for example.
