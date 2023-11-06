@@ -76,4 +76,4 @@ Dependencies
 ------------
 
  - Python 3.5 or later
- - Python Imaging Library (Debian/Ubuntu package: `python-imaging`)
+ - Python Imaging Library (Debian/Ubuntu package: `python3-pil`)
