@@ -201,5 +201,43 @@ class PD290(PD240):
     PIXEL = 0.286
 
 
+class WraaseSC2180(ColorSSTV):
+    VIS_CODE = 0x37
+    WIDTH = 320
+    HEIGHT = 256
+    COLOR_SEQ = (Color.red, Color.green, Color.blue)
+
+    SYNC     = 5.5225
+    PORCH    = 0.5
+    LINE     = 235
+
+    PIXEL  = float(LINE) / float(WIDTH)
+
+    def encode_line(self, line):
+        image = self.pixels
+        yield FREQ_BLACK, self.PORCH
+        for color in self.COLOR_SEQ:
+            yield FREQ_BLACK, self.PORCH
+            for col in range(self.WIDTH):
+                pixel = image[col, line]
+                freq_pixel = byte_to_freq(pixel[color.value])
+                yield freq_pixel, self.PIXEL
+
+
+class WraaseSC2120(WraaseSC2180):
+    VIS_CODE = 0x3f
+
+    # NB: there are "authoritative" sounding documents that will tell you SC-2
+    # 120 uses red and blue channels that have half the line width of the
+    # green channel.  Having spent several hours trying to nut out why SC2-120
+    # images weren't decoding in anything else, I can say this is utter
+    # bunkum.  The line width is the same for all three channels, just
+    # shorter.
+
+    LINE     = 156
+    PIXEL  = float(LINE) / float(WraaseSC2180.WIDTH)
+
+
 MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, Robot36,
-        PasokonP3, PasokonP5, PasokonP7, PD90, PD120, PD160, PD180, PD240, PD290)
+        PasokonP3, PasokonP5, PasokonP7, PD90, PD120, PD160, PD180, PD240,
+         PD290, WraaseSC2120, WraaseSC2180)
