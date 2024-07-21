@@ -79,7 +79,8 @@ class ScottieS2(ScottieS1):
 
 class ScottieDX(ScottieS1):
     VIS_CODE = 0x4c
-    SCAN = 345.7696 - ScottieS1.INTER_CH_GAP
+    # http://www.barberdsp.com/downloads/Dayton%20Paper.pdf
+    SCAN = 345.6000 - ScottieS1.INTER_CH_GAP
 
 
 class Robot36(ColorSSTV):
