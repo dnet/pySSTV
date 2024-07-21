@@ -77,6 +77,11 @@ class ScottieS2(ScottieS1):
     WIDTH = 160
 
 
+class ScottieDX(ScottieS1):
+    VIS_CODE = 0x4c
+    SCAN = 345.7696 - ScottieS1.INTER_CH_GAP
+
+
 class Robot36(ColorSSTV):
     VIS_CODE = 0x08
     WIDTH = 320
@@ -238,6 +243,6 @@ class WraaseSC2120(WraaseSC2180):
     PIXEL  = float(LINE) / float(WraaseSC2180.WIDTH)
 
 
-MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, Robot36,
+MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, ScottieDX, Robot36,
         PasokonP3, PasokonP5, PasokonP7, PD90, PD120, PD160, PD180, PD240,
          PD290, WraaseSC2120, WraaseSC2180)
