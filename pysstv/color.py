@@ -214,19 +214,16 @@ class WraaseSC2180(ColorSSTV):
 
     SYNC     = 5.5225
     PORCH    = 0.5
-    LINE     = 235
+    SCAN     = 235.0
 
-    PIXEL  = float(LINE) / float(WIDTH)
-
-    def encode_line(self, line):
-        image = self.pixels
-        yield FREQ_BLACK, self.PORCH
-        for color in self.COLOR_SEQ:
+    def before_channel(self, color):
+        if color is Color.red:
             yield FREQ_BLACK, self.PORCH
-            for col in range(self.WIDTH):
-                pixel = image[col, line]
-                freq_pixel = byte_to_freq(pixel[color.value])
-                yield freq_pixel, self.PIXEL
+        else:
+            return []
+
+    def after_channel(self, color):
+        return []
 
 
 class WraaseSC2120(WraaseSC2180):
@@ -239,8 +236,17 @@ class WraaseSC2120(WraaseSC2180):
     # bunkum.  The line width is the same for all three channels, just
     # shorter.
 
-    LINE     = 156
-    PIXEL  = float(LINE) / float(WraaseSC2180.WIDTH)
+    SCAN     = 156.0
+
+    def before_channel(self, color):
+        # Not sure why, but SC2-120 decoding seems to need an extra few sync
+        # pulses to decode in QSSTV and slowrx.  Take the extra pulse out, and
+        # it slants something chronic and QSSTV loses sync regularly even on
+        # DX mode.  Put it in, and both decode reliably.  Go figure.  SC2-180
+        # works just fine without this extra pulse at the start of each
+        # channel.
+        yield FREQ_BLACK, self.PORCH
+        yield from super().before_channel(color)
 
 
 MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, ScottieDX, Robot36,
