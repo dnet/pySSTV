@@ -77,6 +77,12 @@ class ScottieS2(ScottieS1):
     WIDTH = 160
 
 
+class ScottieDX(ScottieS1):
+    VIS_CODE = 0x4c
+    # http://www.barberdsp.com/downloads/Dayton%20Paper.pdf
+    SCAN = 345.6000 - ScottieS1.INTER_CH_GAP
+
+
 class Robot36(ColorSSTV):
     VIS_CODE = 0x08
     WIDTH = 320
@@ -201,5 +207,49 @@ class PD290(PD240):
     PIXEL = 0.286
 
 
-MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, Robot36,
-        PasokonP3, PasokonP5, PasokonP7, PD90, PD120, PD160, PD180, PD240, PD290)
+class WraaseSC2180(ColorSSTV):
+    VIS_CODE = 0x37
+    WIDTH = 320
+    HEIGHT = 256
+    COLOR_SEQ = (Color.red, Color.green, Color.blue)
+
+    SYNC     = 5.5225
+    PORCH    = 0.5
+    SCAN     = 235.0
+
+    def before_channel(self, color):
+        if color is Color.red:
+            yield FREQ_BLACK, self.PORCH
+        else:
+            return []
+
+    def after_channel(self, color):
+        return []
+
+
+class WraaseSC2120(WraaseSC2180):
+    VIS_CODE = 0x3f
+
+    # NB: there are "authoritative" sounding documents that will tell you SC-2
+    # 120 uses red and blue channels that have half the line width of the
+    # green channel.  Having spent several hours trying to nut out why SC2-120
+    # images weren't decoding in anything else, I can say this is utter
+    # bunkum.  The line width is the same for all three channels, just
+    # shorter.
+
+    SCAN     = 156.0
+
+    def before_channel(self, color):
+        # Not sure why, but SC2-120 decoding seems to need an extra few sync
+        # pulses to decode in QSSTV and slowrx.  Take the extra pulse out, and
+        # it slants something chronic and QSSTV loses sync regularly even on
+        # DX mode.  Put it in, and both decode reliably.  Go figure.  SC2-180
+        # works just fine without this extra pulse at the start of each
+        # channel.
+        yield FREQ_BLACK, self.PORCH
+        yield from super().before_channel(color)
+
+
+MODES = (MartinM1, MartinM2, ScottieS1, ScottieS2, ScottieDX, Robot36,
+        PasokonP3, PasokonP5, PasokonP7, PD90, PD120, PD160, PD180, PD240,
+         PD290, WraaseSC2120, WraaseSC2180)
