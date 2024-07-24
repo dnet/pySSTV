@@ -14,9 +14,10 @@ Command line usage
 
     $ python -m pysstv -h
     usage: __main__.py [-h]
-                  [--mode {MartinM1,MartinM2,ScottieS1,ScottieS2,Robot36,PasokonP3,PasokonP5,PasokonP7,PD90,PD120,PD160,PD180,PD240,PD290,Robot8BW,Robot24BW}]
+                  [--mode {MartinM1,MartinM2,ScottieS1,ScottieS2,ScottieDX,Robot36,PasokonP3,PasokonP5,PasokonP7,PD90,PD120,PD160,PD180,PD240,PD290,WraaseSC2120,WraaseSC2180,Robot8BW,Robot24BW}]
                   [--rate RATE] [--bits BITS] [--vox] [--fskid FSKID]
-                  [--chan CHAN]
+                  [--chan CHAN] [--resize] [--keep-aspect-ratio]
+                  [--keep-aspect] [--resample {nearest,bicubic,lanczos}]
                   image.png output.wav
 
     Converts an image to an SSTV modulated WAV file.
@@ -25,9 +26,9 @@ Command line usage
       image.png             input image file name
       output.wav            output WAV file name
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
-      --mode {MartinM1,MartinM2,ScottieS1,ScottieS2,Robot36,PasokonP3,PasokonP5,PasokonP7,PD90,PD120D160,PD180,PD240,Robot8BW,Robot24BW}
+      --mode {MartinM1,MartinM2,ScottieS1,ScottieS2,ScottieDX,Robot36,PasokonP3,PasokonP5,PasokonP7,PD90,PD120,PD160,PD180,PD240,PD290,WraaseSC2120,WraaseSC2180,Robot8BW,Robot24BW}
                             image mode (default: Martin M1)
       --rate RATE           sampling rate (default: 48000)
       --bits BITS           bits per sample (default: 16)
@@ -35,11 +36,12 @@ Command line usage
       --fskid FSKID         add FSKID at the end
       --chan CHAN           number of channels (default: mono)
       --resize              resize the image to the correct size
-      --keep-aspect-ratio   keep the original aspect ratio when resizing 
+      --keep-aspect-ratio   keep the original aspect ratio when resizing
                                 (and cut off excess pixels)
-      --keep-aspect         keep the original aspect ratio when resizing 
+      --keep-aspect         keep the original aspect ratio when resizing
                                 (not cut off excess pixels)
-      --resample            which resampling filter to use for resizing
+      --resample {nearest,bicubic,lanczos}
+                            which resampling filter to use for resizing
                                 (see Pillow documentation)
 
 Python interface
