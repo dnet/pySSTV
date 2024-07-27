@@ -27,7 +27,7 @@ class Robot8BW(GrayscaleSSTV):
     WIDTH = 160
     HEIGHT = 120
     SYNC = 7
-    SCAN = 60
+    SCAN = 59.90
 
 
 class Robot24BW(GrayscaleSSTV):
