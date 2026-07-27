@@ -82,5 +82,5 @@ Useful links
 Dependencies
 ------------
 
- - Python 3.5 or later
+ - Python 3.10 or later
  - Python Imaging Library (Debian/Ubuntu package: `python3-pil`)
