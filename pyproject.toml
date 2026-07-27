@@ -5,7 +5,7 @@ readme = "README.md"
 description='Python classes for generating Slow-scan Television transmissions'
 requires-python = ">=3.10"
 dependencies = [
-    "pillow==12.2.0",
+    "pillow==12.3.0",
 ]
 
 [build-system]
