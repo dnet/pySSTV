@@ -1,8 +1,8 @@
 import unittest
 from io import BytesIO
 from itertools import islice
-import mock
-from mock import MagicMock
+from unittest import mock
+from unittest.mock import MagicMock
 import hashlib
 
 from pysstv import sstv

@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-from __future__ import division, with_statement
 from math import sin, pi
 from random import random
-from contextlib import closing
 from itertools import cycle, chain
 from array import array
 import wave
@@ -24,7 +22,7 @@ MSEC_VIS_BIT = 30
 MSEC_FSKID_BIT = 22
 
 
-class SSTV(object):
+class SSTV:
 
     def __init__(self, image, samples_per_sec, bits):
         self.image = image
@@ -47,7 +45,7 @@ class SSTV(object):
         if self.nchannels != 1:
             data = array(fmt, chain.from_iterable(
                 zip(*([data] * self.nchannels))))
-        with closing(wave.open(filename, 'wb')) as wav:
+        with wave.open(filename, 'wb') as wav:
             wav.setnchannels(self.nchannels)
             wav.setsampwidth(self.bits // 8)
             wav.setframerate(self.samples_per_sec)
@@ -103,13 +101,12 @@ class SSTV(object):
         yield FREQ_VIS_START, MSEC_VIS_START
         yield FREQ_SYNC, MSEC_VIS_BIT  # start bit
         vis = self.VIS_CODE
-        num_ones = 0
         for _ in range(7):
             bit = vis & 1
             vis >>= 1
-            num_ones += bit
             bit_freq = FREQ_VIS_BIT1 if bit == 1 else FREQ_VIS_BIT0
             yield bit_freq, MSEC_VIS_BIT
+        num_ones = (self.VIS_CODE & 0x7f).bit_count()
         parity_freq = FREQ_VIS_BIT1 if num_ones % 2 == 1 else FREQ_VIS_BIT0
         yield parity_freq, MSEC_VIS_BIT
         yield FREQ_SYNC, MSEC_VIS_BIT  # stop bit
@@ -125,8 +122,8 @@ class SSTV(object):
         return []
 
     def add_fskid_text(self, text):
-        self.fskid_payload += '\x20\x2a{0}\x01'.format(
-                ''.join(chr(ord(c) - 0x20) for c in text))
+        encoded = ''.join(chr(ord(c) - 0x20) for c in text)
+        self.fskid_payload += f'\x20\x2a{encoded}\x01'
 
     def horizontal_sync(self):
         yield FREQ_SYNC, self.SYNC

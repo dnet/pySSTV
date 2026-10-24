@@ -39,6 +39,6 @@ class TestMartinM1(unittest.TestCase):
         self.maxDiff = None
         line_numbers = [1, 10, 100]
         for line in line_numbers:
-            expected = load_pickled_asset("MartinM1_encode_line_lena{0}".format(line))
+            expected = load_pickled_asset(f"MartinM1_encode_line_lena{line}")
             actual = list(self.lena.encode_line(line))
             self.assertEqual(expected, actual)

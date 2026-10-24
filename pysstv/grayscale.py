@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import division
 from pysstv.sstv import SSTV, byte_to_freq
 
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function, division
 from PIL import Image
 from argparse import ArgumentParser
 from sys import stderr
@@ -77,8 +76,8 @@ def main():
             y = (image.height - mode.HEIGHT) / 2
             image = image.crop((x, y, mode.WIDTH + x, mode.HEIGHT + y))
     elif not all(i >= m for i, m in zip(image.size, (mode.WIDTH, mode.HEIGHT))):
-        print(('Image must be at least {m.WIDTH} x {m.HEIGHT} pixels '
-               'for mode {m.__name__}').format(m=mode), file=stderr)
+        print(f'Image must be at least {mode.WIDTH} x {mode.HEIGHT} pixels '
+              f'for mode {mode.__name__}', file=stderr)
         raise SystemExit(1)
     s = mode(image, args.rate, args.bits)
     s.vox_enabled = args.vox
@@ -90,11 +89,7 @@ def main():
 
 
 def build_module_map():
-    try:
-        from collections import OrderedDict
-        module_map = OrderedDict()
-    except ImportError:
-        module_map = {}
+    module_map = {}
     for module in SSTV_MODULES:
         for mode in module.MODES:
             module_map[mode.__name__] = mode
